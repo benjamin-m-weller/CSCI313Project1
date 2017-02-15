@@ -27,10 +27,11 @@ var onGround = 0;
 var pressedLeft = 0, pressedRight = 0;
 var pressedDown = 0;
 
-var diver, tank, oceanbackground, floor, platform1;
+var diver, tank, oceanbackground, blackScreen;
+var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
 
-const P1X=250, P1Y=300, P1Width=300;
+const PWidth=300;
 
 var pB; // pause button
 var pausedLabel;
@@ -60,13 +61,17 @@ function init()
     var tankImage = queue.getResult("tank");
     var oceanImage = queue.getResult("oceanbackground");
 
-    //floor rectangle
+    // floor rectangle
     var g1 = new createjs.Graphics();
     g1.beginStroke("black").beginFill("#E5CF7F").drawRect(0, 550, 800, 50);
 
     // platform1 rectangle
     var g2 = new createjs.Graphics();
-    g2.beginStroke("black").beginFill("#7481BA").drawRect(P1X, P1Y, P1Width, 30);
+    g2.beginStroke("black").beginFill("#7481BA").drawRect(0, 0, PWidth, 30);
+
+    // black screen
+    var g3 = new createjs.Graphics();
+    g3.beginStroke("black").beginFill("black").drawRect(0, 0, 800, 600);
 
     oceanbackground = new createjs.Bitmap(oceanImage);
     oceanbackground.x = 0; oceanbackground.y = 0;
@@ -78,7 +83,37 @@ function init()
     stage.update();
 
     platform1 = new createjs.Shape(g2);
+    platform1.x = 250; platform1.y = 250;
     stage.addChild(platform1);
+    stage.update();
+
+    platform2 = new createjs.Shape(g2);
+    platform2.x = -138; platform2.y = 100;
+    stage.addChild(platform2);
+    stage.update();
+
+    platform3 = new createjs.Shape(g2);
+    platform3.x = 638; platform3.y = 100;
+    stage.addChild(platform3);
+    stage.update();
+
+    platform4 = new createjs.Shape(g2);
+    platform4.x = -138; platform4.y = 400;
+    stage.addChild(platform4);
+    stage.update();
+
+    platform5 = new createjs.Shape(g2);
+    platform5.x = 638; platform5.y = 400;
+    stage.addChild(platform5);
+    stage.update();
+
+    tank = new createjs.Bitmap(tankImage);
+    tank.x = 390; tank.y = 230;
+    stage.addChild(tank);
+    stage.update();
+
+    blackScreen = new createjs.Shape(g3);
+    stage.addChild(blackScreen);
     stage.update();
 
     diver = new createjs.Bitmap(diverImage);
@@ -87,11 +122,6 @@ function init()
     diver.x = 400; diver.y = 450;
     diver.regX = 20; diver.regY = 23; //set regX & refY to center (40x46)    
     stage.addChild(diver);
-    stage.update();
-
-    tank = new createjs.Bitmap(tankImage);
-    tank.x = 390; tank.y = 280;
-    stage.addChild(tank);
     stage.update();
 
     //Create text for instructions
@@ -103,6 +133,8 @@ function init()
     pause();
     isInstructions = 0;
     stage.removeChild(instructions);
+    createjs.Tween.get(blackScreen).to({alpha: 0}, 500);
+    //stage.removeChild(blackScreen);
 
     pausedLabel = new createjs.Text("PAUSED", "bold 70px Arial", "white");
     pausedLabel.x = 400; pausedLabel.y = 120;
@@ -144,12 +176,10 @@ function tick(event) {
         //GRAVITY
         if (diver.y < 545 - diverChangeY) //Prevents character from falling through the floor
         {
-
-            if (diver.y >= P1Y-4 - diverChangeY && diver.y <= P1Y - diverChangeY &&
-                diver.x >= P1X - diverChangeX && diver.x <= P1X + P1Width + diverChangeX &&
-                yMomentum >= 0 && pressedDown == 0) //On top of platform1
+            //Check if on platforms
+            if (onPlatform(platform1) == 1 || onPlatform(platform2) || onPlatform(platform3) ||
+                    onPlatform(platform4) || onPlatform(platform5)) 
             {
-                diver.y = P1Y - diverChangeY;
                 yMomentum = 0;
             }
             else
@@ -182,6 +212,20 @@ function tick(event) {
         oxygen.value--;
         stage.update();
     }
+}
+
+function onPlatform(p)
+{
+    //On top of platform
+    if (yMomentum >= 0 && pressedDown == 0 &&
+        diver.y >= p.y-4 - diverChangeY && diver.y <= p.y - diverChangeY &&
+        diver.x >= p.x - diverChangeX && diver.x <= p.x + PWidth + diverChangeX)
+        {
+            diver.y = p.y - diverChangeY;
+            return 1;
+        }
+    else
+        return 0;
 }
 
 function handleKeyDown(e)

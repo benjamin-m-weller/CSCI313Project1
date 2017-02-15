@@ -7,10 +7,10 @@ NEED:
 		- Randomize where tank spawns
 	- Refill Oxygen bar
 	- Change score (maybe increment +1)
-- Change collision with platforms into a method (almost there)
-- Add more platforms
 - Add score (number of Oxygen tanks collected)
 	- Maybe include time survived somehow
+- Change oxygen bar to be on the canvas rather than using HTML
+	(Basically, Microsoft Edge is ass but Mark will most likely use that instead of Chrome)
 
 
 POSSIBLE:
@@ -29,3 +29,9 @@ POSSIBLE:
 - Add weapon to shoot enemies
 	- Shoot small circles
 	- Remove circles when they hit an enemy or go off screen.
+
+
+
+COMPLETED
+- Change collision with platforms into a method (almost there)
+- Add more platforms
