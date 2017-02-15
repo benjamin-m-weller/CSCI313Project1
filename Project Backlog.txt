@@ -1,0 +1,31 @@
+Project Backlog:
+
+NEED:
+- Add collisions with Oxygen tank
+	- Move Oxygen tank to different location
+		- Create 6 or more locations where tank can spawn
+		- Randomize where tank spawns
+	- Refill Oxygen bar
+	- Change score (maybe increment +1)
+- Change collision with platforms into a method (almost there)
+- Add more platforms
+- Add score (number of Oxygen tanks collected)
+	- Maybe include time survived somehow
+
+
+POSSIBLE:
+- Add animations for character
+	- Running
+	- Swimming up
+	- Holding down while standing
+	- Holding down while swimming
+- Add enemies
+	- Fish
+		- swim left/right
+	- Crab
+		- Move along floor/platforms
+	- Enemies will take oxygen when come in contact
+		- Enemies will dissapear upon contact
+- Add weapon to shoot enemies
+	- Shoot small circles
+	- Remove circles when they hit an enemy or go off screen.
