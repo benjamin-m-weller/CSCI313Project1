@@ -27,7 +27,7 @@ var onGround = 0;
 var pressedLeft = 0, pressedRight = 0;
 var pressedDown = 0;
 
-var diver, tank, oceanbackground, blackScreen;
+var diver, tank, oceanbackground, blackScreen, redarrowL, redarrowR;
 var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
 
@@ -43,7 +43,7 @@ function load()
     queue = new createjs.LoadQueue(false);
     queue.addEventListener( "complete", init );
     queue.loadManifest([{id:"bigdaddy",src:"bigdaddy.png"},{id:"tank",src:"tank.png"},
-        {id:"oceanbackground",src:"oceanbackground.png"}]);
+        {id:"oceanbackground",src:"oceanbackground.png"},{id:"redarrow",src:"redarrow.png"}]);
 
     document.onkeyup = handleKeyUp.bind(this);
     document.onkeydown = handleKeyDown.bind(this);
@@ -60,6 +60,7 @@ function init()
     var diverImage = queue.getResult("bigdaddy");
     var tankImage = queue.getResult("tank");
     var oceanImage = queue.getResult("oceanbackground");
+    var redarrowImage = queue.getResult("redarrow");
 
     // floor rectangle
     var g1 = new createjs.Graphics();
@@ -107,13 +108,25 @@ function init()
     stage.addChild(platform5);
     stage.update();
 
+    blackScreen = new createjs.Shape(g3);
+    stage.addChild(blackScreen);
+    stage.update();
+
+    redarrowL = new createjs.Bitmap(redarrowImage);
+    redarrowL.x = 330; redarrowL.y = 227;
+    stage.addChild(redarrowL);
+    stage.update();
+
+    redarrowR = new createjs.Bitmap(redarrowImage);
+    redarrowR.x = 455; redarrowR.y = 227;
+    redarrowR.regX = redarrowR.image.width/2;
+    redarrowR.scaleX *= -1;
+    stage.addChild(redarrowR);
+    stage.update();
+
     tank = new createjs.Bitmap(tankImage);
     tank.x = 390; tank.y = 230;
     stage.addChild(tank);
-    stage.update();
-
-    blackScreen = new createjs.Shape(g3);
-    stage.addChild(blackScreen);
     stage.update();
 
     diver = new createjs.Bitmap(diverImage);
@@ -134,6 +147,8 @@ function init()
     isInstructions = 0;
     stage.removeChild(instructions);
     createjs.Tween.get(blackScreen).to({alpha: 0}, 500);
+    createjs.Tween.get(redarrowL).to({alpha: 0}, 500);
+    createjs.Tween.get(redarrowR).to({alpha: 0}, 500);
     //stage.removeChild(blackScreen);
 
     pausedLabel = new createjs.Text("PAUSED", "bold 70px Arial", "white");
