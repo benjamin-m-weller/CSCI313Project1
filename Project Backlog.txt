@@ -1,6 +1,6 @@
 Project Backlog:
 
-NEED:
+NEED (for game to be played):
 - Add collisions with Oxygen tank
 	- Move Oxygen tank to different location
 		- Create 6 or more locations where tank can spawn
@@ -32,6 +32,25 @@ POSSIBLE:
 
 
 
-COMPLETED
-- Change collision with platforms into a method (almost there)
+COMPLETED THIS ITERATION
+- Create canvas
+- Create ocean floor
+- Add background
+- Add gravity
+	- don't allow character to fall through ocean floor
+- Make smooth keyboard controls
+	- arrow keys to swim around
+	- hold down to sink faster
+- Don't allow character to swim above screen
+- Make going left or right (out of bounds) teleport to opposite side
+	- alike to pacman
+- Create character sprite
+- Create oxygen tank sprite
+- Create remaining oxygen bar
+- Make character sprite turn left and right with correct direction
+- Create platforms as Rectangle Shape objects
+	- If character is standing on platform, gravity does not affect
+	- If player holds down, they can fall through platforms
+	- player can swim up through the bottom of platforms
+- Change collision with platforms into a re-usable method
 - Add more platforms
