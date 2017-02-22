@@ -12,6 +12,7 @@ NEED (for game to be played):
 - Add score (number of Oxygen tanks collected)
 	- Maybe include time survived somehow
 - Make game end when Oxygen bar runs out.
+- Add documentation to top of js file
 
 
 POSSIBLE:
@@ -39,7 +40,7 @@ POSSIBLE:
 
 
 COMPLETED THIS ITERATION
-- Change oxygen bar to be on the canvas rather than using HTML
+- (Aaron) Change oxygen bar to be on the canvas rather than using HTML
 
 
 COMPLETED LAST ITERATION
