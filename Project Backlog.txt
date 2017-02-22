@@ -7,10 +7,13 @@ NEED (for game to be played):
 		- Randomize where tank spawns
 	- Refill Oxygen bar
 	- Change score (maybe increment +1)
-- Add score (number of Oxygen tanks collected)
-	- Maybe include time survived somehow
-- Change oxygen bar to be on the canvas rather than using HTML
-	(Basically, Microsoft Edge is ass but Mark will most likely use that instead of Chrome)
+	- Make oxygen drop slightly faster (increase oxygenRate += .1)
+		- To make the game get harder each tank you collect 
+- Make score go up +1000 for each tank collected.
+	- Maybe have it increase by more each tank
+		+1000, +1100, +1200, etc
+- Make game end when Oxygen bar runs out.
+- Add documentation to top of js file
 
 
 POSSIBLE:
@@ -37,8 +40,13 @@ POSSIBLE:
 	- the oxygen tanks would have to move with the platform if on top
 
 
-
 COMPLETED THIS ITERATION
+- (Aaron) Add Score
+	- goes up over time
+- (Aaron) Change oxygen bar to be on the canvas rather than using HTML
+
+
+COMPLETED LAST ITERATION
 - Create canvas
 - Create ocean floor
 - Add background
