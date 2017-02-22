@@ -31,6 +31,7 @@ var diver, tank, oceanbackground, blackScreen, redarrowL, redarrowR;
 var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand;
+var oxygenRate = 1;
 
 const PWidth=300;
 
@@ -249,7 +250,7 @@ function tick(event) {
 
         if(oxygenCommand.w > 0)
         {
-            oxygenCommand.w -= 1;
+            oxygenCommand.w -= oxygenRate;
         }
         stage.update();
     }
