@@ -124,6 +124,8 @@ function init()
     stage.addChild(redarrowR);
     stage.update();
 
+	
+	//Flag
     tank = new createjs.Bitmap(tankImage);
     tank.x = 390; tank.y = 230;
     stage.addChild(tank);
@@ -159,6 +161,7 @@ function init()
 
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", tick);
+	
 }
 
 function tick(event) {
@@ -183,7 +186,7 @@ function tick(event) {
         //Up control
         if (yKeyHeld == "UP")
         {
-            if (diver.y > 20) //Prevemts character from swimming too high out of view
+            if (diver.y > 20) //Prevents character from swimming too high out of view
                 yMomentum = -10
             onGround = 0;
         }
@@ -223,6 +226,8 @@ function tick(event) {
             if (yMomentum < 0)
                 diver.y += yMomentum;
         }
+		
+		//My movestank method should be called here if is a collision between the sprite and the tank, and thus trigger a move of the tank.
 
         oxygen.value--;
         stage.update();
@@ -374,4 +379,52 @@ function pause()
 }
 
 
+function movesTank()
+{
+	//I have a list of locations that the tank could be in
+	var myArray=[{x: 390, y:230},{x: 10, y:80}, {x:10, y:380}, {x:770, y:80}, {x:770, y:380}];
+	
+	
+	//Going to move the tank to all the possible locations 
+	/* Debugging
+	for (var i=0; i<myArray.length; i++)
+	{
+		var x=myArray[i].x;
+		var y=myArray[i].y;
+		
+		tank.x=myArray[i].x;
+		tank.y=myArray[i].y;
+		
+		stage.update();
+	} */
+	
+	//I take the current location of the tank, remove it, and then randomly place the tank in another location.
+	var i=0;
+	var myx=tank.x;
+	var myy=tank.y;
+	for (i=0; i<myArray.length; i++)
+	{
+		if (myArray[i].x==tank.x && myArray[i].y==tank.y)
+		{
+			break;
+		}
+		else
+		{
+			continue;
+		}
+	}
+	
+	//Whatever value the for loop returns indicates the index of the location that will be removed.
+	myArray.splice(i, 1); //This should remove the current location.
+	
+	//Going to select a random location
+	var randomIndex=Math.floor(Math.random()*(myArray.length-1)); //Unsure if this code allows for 0 to be returned??
+	
+	//Set the tank to the random index's location
+	tank.x=myArray[randomIndex].x;
+	tank.y=myArray[randomIndex].y;
+	
+	stage.update();
+	
+}
 
