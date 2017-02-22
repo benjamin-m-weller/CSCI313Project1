@@ -153,8 +153,6 @@ function init()
     stage.addChild(redarrowR);
     stage.update();
 
-	
-	//Flag
     tank = new createjs.Bitmap(tankImage);
     tank.x = 390; tank.y = 230;
     stage.addChild(tank);
@@ -255,15 +253,23 @@ function tick(event) {
                 diver.y += yMomentum;
         }
 		
-		//My movestank method should be called here if is a collision between the sprite and the tank, and thus trigger a move of the tank.
-
+		//Going to check and see if the sprite collided with the tank.
+		checkTankCollision();
 
         if(oxygenCommand.w > 0)
         {
             oxygenCommand.w -= oxygenRate;
+			
+			//Adding to the score
+			score++;
+			scoreLabel.text = "Score: " + score;
         }
-        score++;
-        scoreLabel.text = "Score: " + score;
+		else
+		{
+			//We should have a gameover sequence play here.
+			//At least we should stop adding to the score.
+		}
+		
         stage.update();
     }
 }
@@ -416,27 +422,12 @@ function pause()
 function movesTank()
 {
 	//I have a list of locations that the tank could be in
-	var myArray=[{x: 390, y:230},{x: 10, y:80}, {x:10, y:380}, {x:770, y:80}, {x:770, y:380}];
-	
-	
-	//Going to move the tank to all the possible locations 
-	/* Debugging
-	for (var i=0; i<myArray.length; i++)
-	{
-		var x=myArray[i].x;
-		var y=myArray[i].y;
+	var myArray=[{x: 390, y:230}, {x: 10, y:80}, {x:10, y:380}, {x:770, y:80}, {x:770, y:380}];
 		
-		tank.x=myArray[i].x;
-		tank.y=myArray[i].y;
-		
-		stage.update();
-	} */
-	
 	//I take the current location of the tank, remove it, and then randomly place the tank in another location.
-	var i=0;
 	var myx=tank.x;
 	var myy=tank.y;
-	for (i=0; i<myArray.length; i++)
+	for (var i=0; i<myArray.length; i++)
 	{
 		if (myArray[i].x==tank.x && myArray[i].y==tank.y)
 		{
@@ -448,11 +439,11 @@ function movesTank()
 		}
 	}
 	
-	//Whatever value the for loop returns indicates the index of the location that will be removed.
+	//Whatever value the for loop stops at indicates the index of the location that will be removed.
 	myArray.splice(i, 1); //This should remove the current location.
 	
 	//Going to select a random location
-	var randomIndex=Math.floor(Math.random()*(myArray.length-1)); //Unsure if this code allows for 0 to be returned??
+	var randomIndex=Math.floor(Math.random()*(myArray.length)); 
 	
 	//Set the tank to the random index's location
 	tank.x=myArray[randomIndex].x;
@@ -462,3 +453,17 @@ function movesTank()
 	
 }
 
+function checkTankCollision()
+{
+	//Going to get the local point for the middle of the oxygen tank
+	var point=tank.localToLocal(10,10,diver);
+	
+	//Now comparing the local point to see if the diver has hit the middle of the tank.
+	if (diver.hitTest(point.x, point.y))
+	{
+		movesTank();
+		//Reset oxygen bar 
+		oxygenCommand.w=400;
+		score+=100;
+	}
+}
