@@ -3,10 +3,7 @@ Project Backlog:
 NEED (for game to be played):
 - Add collisions with Oxygen tank
 	- Move Oxygen tank to different location
-		- Create 6 or more locations where tank can spawn
-		- Randomize where tank spawns
-	- Refill Oxygen bar
-	- Change score (maybe increment +1)
+		- Create 6 or more locations where tank can spawn //I only have 5.....perhaps I will add another
 	- Make oxygen drop slightly faster (increase oxygenRate += .1)
 		- To make the game get harder each tank you collect 
 - Make score go up +1000 for each tank collected.
