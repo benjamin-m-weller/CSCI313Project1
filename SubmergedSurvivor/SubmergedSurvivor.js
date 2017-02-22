@@ -30,13 +30,13 @@ var pressedDown = 0;
 var diver, tank, oceanbackground, blackScreen, redarrowL, redarrowR;
 var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
+var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand;
 
 const PWidth=300;
 
 var pB; // pause button
 var pausedLabel;
 var isInstructions = 1;
-var oxygen; // oxygen bar
 
 function load()
 {
@@ -50,7 +50,6 @@ function load()
     document.getElementById("canvas").onkeydown = handleKeyDown;
 
     pB = document.getElementById("pauseBtn");
-    oxygen = document.getElementById("oxygen");
 }
 
 function init()
@@ -73,6 +72,14 @@ function init()
     // black screen
     var g3 = new createjs.Graphics();
     g3.beginStroke("black").beginFill("black").drawRect(0, 0, 800, 600);
+
+    // oxygen bar black background  
+    var g4 = new createjs.Graphics();
+    g4.beginStroke("black").beginFill("black").drawRect(0, 0, 400, 25);
+
+    // oxygen bar
+    var g5 = new createjs.Graphics();
+    g5.beginStroke("black").beginFill("lightblue"); //.drawRect() is set in a command later
 
     oceanbackground = new createjs.Bitmap(oceanImage);
     oceanbackground.x = 0; oceanbackground.y = 0;
@@ -106,6 +113,22 @@ function init()
     platform5 = new createjs.Shape(g2);
     platform5.x = 638; platform5.y = 400;
     stage.addChild(platform5);
+    stage.update();
+
+    oxygenLabel = new createjs.Text("Oxygen: ", "bold 25px Arial", "#434343");
+    oxygenLabel.x = 10; oxygenLabel.y = 562;
+    stage.addChild(oxygenLabel);
+    stage.update();
+
+    oxygenBarBack = new createjs.Shape(g4);
+    oxygenBarBack.x = 120; oxygenBarBack.y = 565;
+    stage.addChild(oxygenBarBack);
+    stage.update();
+
+    oxygenBar = new createjs.Shape(g5);    
+    oxygenBar.x = 120; oxygenBar.y = 565;
+    oxygenCommand = oxygenBar.graphics.drawRect(0, 0, 400, 25).command;
+    stage.addChild(oxygenBar);
     stage.update();
 
     blackScreen = new createjs.Shape(g3);
@@ -149,7 +172,6 @@ function init()
     createjs.Tween.get(blackScreen).to({alpha: 0}, 500);
     createjs.Tween.get(redarrowL).to({alpha: 0}, 500);
     createjs.Tween.get(redarrowR).to({alpha: 0}, 500);
-    //stage.removeChild(blackScreen);
 
     pausedLabel = new createjs.Text("PAUSED", "bold 70px Arial", "white");
     pausedLabel.x = 400; pausedLabel.y = 120;
@@ -224,7 +246,11 @@ function tick(event) {
                 diver.y += yMomentum;
         }
 
-        oxygen.value--;
+
+        if(oxygenCommand.w > 0)
+        {
+            oxygenCommand.w -= 1;
+        }
         stage.update();
     }
 }
