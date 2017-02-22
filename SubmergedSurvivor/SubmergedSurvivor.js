@@ -30,8 +30,8 @@ var pressedDown = 0;
 var diver, tank, oceanbackground, blackScreen, redarrowL, redarrowR;
 var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
-var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand;
-var oxygenRate = 1;
+var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
+var scoreLabel, score = 0;
 
 const PWidth=300;
 
@@ -76,7 +76,7 @@ function init()
 
     // oxygen bar black background  
     var g4 = new createjs.Graphics();
-    g4.beginStroke("black").beginFill("black").drawRect(0, 0, 400, 25);
+    g4.beginStroke("black").beginFill("#434343").drawRect(0, 0, 400, 25);
 
     // oxygen bar
     var g5 = new createjs.Graphics();
@@ -117,19 +117,24 @@ function init()
     stage.update();
 
     oxygenLabel = new createjs.Text("Oxygen: ", "bold 25px Arial", "#434343");
-    oxygenLabel.x = 10; oxygenLabel.y = 562;
+    oxygenLabel.x = 30; oxygenLabel.y = 562;
     stage.addChild(oxygenLabel);
     stage.update();
 
     oxygenBarBack = new createjs.Shape(g4);
-    oxygenBarBack.x = 120; oxygenBarBack.y = 565;
+    oxygenBarBack.x = 140; oxygenBarBack.y = 565;
     stage.addChild(oxygenBarBack);
     stage.update();
 
     oxygenBar = new createjs.Shape(g5);    
-    oxygenBar.x = 120; oxygenBar.y = 565;
+    oxygenBar.x = 140; oxygenBar.y = 565;
     oxygenCommand = oxygenBar.graphics.drawRect(0, 0, 400, 25).command;
     stage.addChild(oxygenBar);
+    stage.update();
+
+    scoreLabel = new createjs.Text("Score: " + score, "bold 25px Arial", "#434343");
+    scoreLabel.x = 580; scoreLabel.y = 562;
+    stage.addChild(scoreLabel);
     stage.update();
 
     blackScreen = new createjs.Shape(g3);
@@ -252,6 +257,8 @@ function tick(event) {
         {
             oxygenCommand.w -= oxygenRate;
         }
+        score++;
+        scoreLabel.text = "Score: " + score;
         stage.update();
     }
 }
