@@ -27,10 +27,10 @@ var onGround = 0;
 var pressedLeft = 0, pressedRight = 0;
 var pressedDown = 0;
 
-var diver, tank, oceanbackground, blackScreen, redarrowL, redarrowR;
+var diver, tank, oceanbackground, blackScreen, redScreen, redarrowL, redarrowR;
 var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
-var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
+var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 4;
 var scoreLabel, score = 0, scoreRate = 0;
 
 const PWidth=300; //width of the platforms
@@ -38,6 +38,7 @@ const PWidth=300; //width of the platforms
 var pB; // pause button
 var pausedLabel;
 var isInstructions = 1;
+var isGameOver = 0;
 
 function load()
 {
@@ -81,6 +82,10 @@ function init()
     // oxygen bar
     var g5 = new createjs.Graphics();
     g5.beginStroke("black").beginFill("lightblue"); //.drawRect() is set in a command later
+
+    // red screen (for gameOver)
+    var g6 = new createjs.Graphics();
+    g6.beginStroke("red").beginFill("red").drawRect(0, 0, 800, 600);
 
     oceanbackground = new createjs.Bitmap(oceanImage);
     oceanbackground.x = 0; oceanbackground.y = 0;
@@ -130,6 +135,11 @@ function init()
     oxygenBar.x = 140; oxygenBar.y = 565;
     oxygenCommand = oxygenBar.graphics.drawRect(0, 0, 400, 25).command;
     stage.addChild(oxygenBar);
+    stage.update();
+
+    redScreen = new createjs.Shape(g6);
+    stage.addChild(redScreen);
+    redScreen.alpha = 0;
     stage.update();
 
     scoreLabel = new createjs.Text("Score: " + score, "bold 25px Arial", "#434343");
@@ -266,9 +276,9 @@ function tick(event) {
         }
 		else
 		{
-			//We should have a gameover sequence play here.
-			//At least we should stop adding to the score.
             oxygenCommand.w = 0; //Makes it look cleaner when gameover.
+
+            gameOver();
 		}
 		
         stage.update();
@@ -306,7 +316,7 @@ function checkTankCollision()
         //Adjust score/difficulty
         scoreRate += 100;
 		score += (1000 + scoreRate);
-        if(oxygenRate <= 2.5) //Dropping faster is too hard
+        if(oxygenRate <= 3) //Dropping faster is too hard
             oxygenRate += 0.05;
 	}
 }
@@ -357,7 +367,10 @@ function handleKeyDown(e)
     switch (e.keyCode)
     {
         case KEYCODE_SPACE:
-            pause();
+            if(isGameOver == 0)
+                pause();
+            else
+                resetGame();
             break;
 
         case KEYCODE_D:
@@ -473,4 +486,54 @@ function pause()
             stage.update();
         }
     }
+}
+
+function gameOver()
+{
+    //Reposition scoreLabel
+    scoreLabel.color = "white";
+    scoreLabel.font = "bold 50px Arial";
+    scoreLabel.x = 400; scoreLabel.y = 500;
+    scoreLabel.textAlign = "center";
+    stage.swapChildren(diver, scoreLabel);
+    
+    //reuse pauseLabel
+    pausedLabel.text = "GAME OVER"
+    pausedLabel.visible = true;
+
+    var gameOverText = new createjs.Text("Click SPACEBAR to play again!", "bold 30px Arial", "white");
+    gameOverText.textAlign = "center";
+    gameOverText.x = 400; gameOverText.y = 300;
+    stage.addChild(gameOverText);
+    stage.update();
+
+    tank.visible = false;
+
+    createjs.Ticker.setPaused(true);
+    redScreen.alpha = 1;
+    isGameOver = true;
+
+}
+
+function resetGame()
+{
+    //reset variables
+    score = 0;
+    scoreRate = 0;
+    oxygenRate = 0.5;
+    oxygenCommand.w = 400;
+    isInstructions = 1;
+    yMomentum = 0;
+    onGround = 0;
+    pressedLeft = 0, pressedRight = 0;
+    pressedDown = 0;
+    isGameOver = 0;
+
+    //removes all children from stage. Saves memory (i think)
+    for (var i = stage.children.length - 1; i >= 0; i--)
+    {
+        stage.removeChild(stage.children[i]);
+    };
+
+    init();
 }
