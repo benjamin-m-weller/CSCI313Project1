@@ -297,6 +297,7 @@ function checkTankCollision()
 	//Now comparing the local point to see if the diver has hit the middle of the tank.
 	if (diver.hitTest(point.x, point.y))
 	{
+        //Move tank to a different location
 		movesTank();
 
 		//Reset oxygen bar 
@@ -305,7 +306,8 @@ function checkTankCollision()
         //Adjust score/difficulty
         scoreRate += 100;
 		score += (1000 + scoreRate);
-        oxygenRate += 0.1;
+        if(oxygenRate <= 2.5) //Dropping faster is too hard
+            oxygenRate += 0.05;
 	}
 }
 
