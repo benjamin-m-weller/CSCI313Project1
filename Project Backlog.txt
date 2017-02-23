@@ -1,14 +1,7 @@
 Project Backlog:
 
 NEED (for game to be played):
-- Add collisions with Oxygen tank
-	- Move Oxygen tank to different location
-		- Create 6 or more locations where tank can spawn //I only have 5.....perhaps I will add another
-	- Make oxygen drop slightly faster (increase oxygenRate += .1)
-		- To make the game get harder each tank you collect 
-- Make score go up +1000 for each tank collected.
-	- Maybe have it increase by more each tank
-		+1000, +1100, +1200, etc
+- Add more tank locations
 - Make game end when Oxygen bar runs out.
 - Add documentation to top of js file
 
@@ -41,6 +34,10 @@ COMPLETED THIS ITERATION
 - (Aaron) Add Score
 	- goes up over time
 - (Aaron) Change oxygen bar to be on the canvas rather than using HTML
+- (Ben) Add collisions with Oxygen tank
+- (Ben) Move Oxygen tank to different location
+- (Aaron) Make oxygen drop faster each tank collected
+- (Aaron) Make score go up more with each tank
 
 
 COMPLETED LAST ITERATION
