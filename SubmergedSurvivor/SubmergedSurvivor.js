@@ -33,7 +33,7 @@ var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var scoreLabel, score = 0;
 
-const PWidth=300;
+const PWidth=300; //width of the platforms
 
 var pB; // pause button
 var pausedLabel;
@@ -268,6 +268,7 @@ function tick(event) {
 		{
 			//We should have a gameover sequence play here.
 			//At least we should stop adding to the score.
+            oxygenCommand.w = 0; //Makes it look cleaner when gameover.
 		}
 		
         stage.update();
@@ -286,6 +287,59 @@ function onPlatform(p)
         }
     else
         return 0;
+}
+
+function checkTankCollision()
+{
+	//Going to get the local point for the middle of the oxygen tank
+	var point=tank.localToLocal(10,10,diver);
+	
+	//Now comparing the local point to see if the diver has hit the middle of the tank.
+	if (diver.hitTest(point.x, point.y))
+	{
+		movesTank();
+
+		//Reset oxygen bar 
+		oxygenCommand.w=400;
+
+        //Adjust score/difficulty
+		score+=1000;
+        oxygenRate += 0.1;
+	}
+}
+
+function movesTank()
+{
+	//I have a list of locations that the tank could be in
+	var myArray=[{x: 390, y:230}, {x: 10, y:80}, {x:10, y:380}, {x:770, y:80}, {x:770, y:380}];
+		
+	//I take the current location of the tank, remove it, and then randomly place the tank in another location.
+	var myx=tank.x;
+	var myy=tank.y;
+	for (var i=0; i<myArray.length; i++)
+	{
+		if (myArray[i].x==tank.x && myArray[i].y==tank.y)
+		{
+			break;
+		}
+		else
+		{
+			continue;
+		}
+	}
+	
+	//Whatever value the for loop stops at indicates the index of the location that will be removed.
+	myArray.splice(i, 1); //This should remove the current location.
+	
+	//Going to select a random location
+	var randomIndex=Math.floor(Math.random()*(myArray.length)); 
+	
+	//Set the tank to the random index's location
+	tank.x=myArray[randomIndex].x;
+	tank.y=myArray[randomIndex].y;
+	
+	stage.update();
+	
 }
 
 function handleKeyDown(e)
@@ -416,54 +470,4 @@ function pause()
             stage.update();
         }
     }
-}
-
-
-function movesTank()
-{
-	//I have a list of locations that the tank could be in
-	var myArray=[{x: 390, y:230}, {x: 10, y:80}, {x:10, y:380}, {x:770, y:80}, {x:770, y:380}];
-		
-	//I take the current location of the tank, remove it, and then randomly place the tank in another location.
-	var myx=tank.x;
-	var myy=tank.y;
-	for (var i=0; i<myArray.length; i++)
-	{
-		if (myArray[i].x==tank.x && myArray[i].y==tank.y)
-		{
-			break;
-		}
-		else
-		{
-			continue;
-		}
-	}
-	
-	//Whatever value the for loop stops at indicates the index of the location that will be removed.
-	myArray.splice(i, 1); //This should remove the current location.
-	
-	//Going to select a random location
-	var randomIndex=Math.floor(Math.random()*(myArray.length)); 
-	
-	//Set the tank to the random index's location
-	tank.x=myArray[randomIndex].x;
-	tank.y=myArray[randomIndex].y;
-	
-	stage.update();
-	
-}
-
-function checkTankCollision()
-{
-	//Going to get the local point for the middle of the oxygen tank
-	var point=tank.localToLocal(10,10,diver);
-	
-	//Now comparing the local point to see if the diver has hit the middle of the tank.
-	if (diver.hitTest(point.x, point.y))
-	{
-		movesTank();
-		//Reset oxygen bar 
-		oxygenCommand.w=400;
-		score+=100;
-	}
 }
