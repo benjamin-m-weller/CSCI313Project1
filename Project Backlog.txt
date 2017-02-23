@@ -1,8 +1,6 @@
 Project Backlog:
 
 NEED (for game to be played):
-- Add more tank locations
-- Make game end when Oxygen bar runs out.
 - Add documentation to top of js file
 
 
@@ -35,9 +33,13 @@ COMPLETED THIS ITERATION
 	- goes up over time
 - (Aaron) Change oxygen bar to be on the canvas rather than using HTML
 - (Ben) Add collisions with Oxygen tank
+	- Add to score
+	- Move oxygen tank to different location
 - (Ben) Move Oxygen tank to different location
 - (Aaron) Make oxygen drop faster each tank collected
 - (Aaron) Make score go up more with each tank
+- (Aaron) Add game over sequence
+	- Allow ability to reset game
 
 
 COMPLETED LAST ITERATION
