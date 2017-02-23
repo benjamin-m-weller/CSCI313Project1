@@ -31,7 +31,7 @@ var diver, tank, oceanbackground, blackScreen, redarrowL, redarrowR;
 var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
-var scoreLabel, score = 0;
+var scoreLabel, score = 0, scoreRate = 0;
 
 const PWidth=300; //width of the platforms
 
@@ -300,10 +300,11 @@ function checkTankCollision()
 		movesTank();
 
 		//Reset oxygen bar 
-		oxygenCommand.w=400;
+		oxygenCommand.w = 400;
 
         //Adjust score/difficulty
-		score+=1000;
+        scoreRate += 100;
+		score += (1000 + scoreRate);
         oxygenRate += 0.1;
 	}
 }
