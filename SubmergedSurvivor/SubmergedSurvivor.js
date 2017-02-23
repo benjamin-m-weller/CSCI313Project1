@@ -30,7 +30,7 @@ var pressedDown = 0;
 var diver, tank, oceanbackground, blackScreen, redScreen, redarrowL, redarrowR;
 var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
-var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 4;
+var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var scoreLabel, score = 0, scoreRate = 0;
 
 const PWidth=300; //width of the platforms
@@ -302,7 +302,7 @@ function onPlatform(p)
 function checkTankCollision()
 {
 	//Going to get the local point for the middle of the oxygen tank
-	var point=tank.localToLocal(10,10,diver);
+	var point = tank.localToLocal(10, 10, diver);
 	
 	//Now comparing the local point to see if the diver has hit the middle of the tank.
 	if (diver.hitTest(point.x, point.y))
@@ -324,7 +324,16 @@ function checkTankCollision()
 function movesTank()
 {
 	//I have a list of locations that the tank could be in
-	var myArray=[{x: 390, y:230}, {x: 10, y:80}, {x:10, y:380}, {x:770, y:80}, {x:770, y:380}];
+	var myArray=[
+        {x:390, y:230}, //middle platform
+        {x:390, y:530}, //middle floor
+        {x:10, y:80}, //top left platform
+        {x:10, y:380}, //bottom left platform
+        {x:10, y:530}, //left floor
+        {x:770, y:80}, //top right platform
+        {x:770, y:380}, //bottom right platform
+        {x:770, y:530} //right floor
+        ];
 		
 	//I take the current location of the tank, remove it, and then randomly place the tank in another location.
 	var myx=tank.x;
