@@ -537,6 +537,7 @@ function resetGame()
     pressedLeft = 0, pressedRight = 0;
     pressedDown = 0;
     isGameOver = 0;
+    createjs.Ticker.setPaused(false);
 
     //removes all children from stage. Saves memory (i think)
     for (var i = stage.children.length - 1; i >= 0; i--)
