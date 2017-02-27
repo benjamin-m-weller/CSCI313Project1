@@ -31,6 +31,7 @@ var diver, tank, oceanbackground, blackScreen, redScreen, redarrowL, redarrowR;
 var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
+var drowningbar, drowningCommand, drowningRate = 1;
 var scoreLabel, score = 0, scoreRate = 0;
 
 const PWidth=300; //width of the platforms
@@ -38,6 +39,7 @@ const PWidth=300; //width of the platforms
 var pB; // pause button
 var pausedLabel;
 var isInstructions = 1;
+var isDrowning = 0;
 var isGameOver = 0;
 
 function load()
@@ -82,6 +84,10 @@ function init()
     // oxygen bar
     var g5 = new createjs.Graphics();
     g5.beginStroke("black").beginFill("lightblue"); //.drawRect() is set in a command later
+
+    // drowning bar
+    var g7 = new createjs.Graphics();
+    g7.beginStroke("black").beginFill("red"); //.drawRect() is set in a command later
 
     // red screen (for gameOver)
     var g6 = new createjs.Graphics();
@@ -135,6 +141,13 @@ function init()
     oxygenBar.x = 140; oxygenBar.y = 565;
     oxygenCommand = oxygenBar.graphics.drawRect(0, 0, 400, 25).command;
     stage.addChild(oxygenBar);
+    stage.update();
+
+    drowningBar = new createjs.Shape(g7);
+    drowningBar.x = 140; drowningBar.y = 565;
+    drowningCommand = drowningBar.graphics.drawRect(0, 0, 0, 25).command;
+    drowningBar.alpha = 0.5;
+    stage.addChild(drowningBar);
     stage.update();
 
     redScreen = new createjs.Shape(g6);
@@ -263,13 +276,15 @@ function tick(event) {
                 diver.y += yMomentum;
         }
 		
-		//Going to check and see if the sprite collided with the tank.
+		//Going to check and see if the diver collided with the tank.
 		checkTankCollision();
 
+        //Oxygen bar
         if(oxygenCommand.w > 0)
         {
             oxygenCommand.w -= oxygenRate;
-			
+			isDrowning = 0;
+
 			//Adding to the score
 			score++;
 			scoreLabel.text = "Score: " + score;
@@ -277,9 +292,34 @@ function tick(event) {
 		else
 		{
             oxygenCommand.w = 0; //Makes it look cleaner when gameover.
+            isDrowning = 1;
 
-            gameOver();
 		}
+
+        //Drowning
+        if(isDrowning == 1)
+        {
+            drowningCommand.w += drowningRate;
+            if(redScreen.alpha == 0)
+            {
+                createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
+                createjs.Ticker.setFPS(50);
+            }
+
+            //Check for gameOver
+            if(drowningCommand.w >= 400){
+                gameOver();
+            }               
+        }
+        else if(drowningCommand.w > 0) //lower if now drowning
+        {
+            drowningCommand.w -= 0.05; //drowning bar slowly drains
+            if(redScreen.alpha == 0.3)
+            {
+                createjs.Tween.get(redScreen).to({alpha: 0}, 500);
+                createjs.Ticker.setFPS(60);                
+            }
+        }
 		
         stage.update();
     }
@@ -311,13 +351,13 @@ function checkTankCollision()
 		movesTank();
 
 		//Reset oxygen bar 
-		oxygenCommand.w = 400;
+        oxygenCommand.w = 400;
 
         //Adjust score/difficulty
         scoreRate += 100;
 		score += (1000 + scoreRate);
-        if(oxygenRate <= 3) //Dropping faster is too hard
-            oxygenRate += 0.05;
+        if(oxygenRate <= 3.0) //Dropping faster is too hard
+            oxygenRate += 0.1;
 	}
 }
 
@@ -507,7 +547,7 @@ function gameOver()
     stage.swapChildren(diver, scoreLabel);
     
     //reuse pauseLabel
-    pausedLabel.text = "GAME OVER"
+    pausedLabel.text = "YOU DROWNED"
     pausedLabel.visible = true;
 
     var gameOverText = new createjs.Text("Click SPACEBAR to play again!", "bold 30px Arial", "white");
@@ -531,11 +571,13 @@ function resetGame()
     scoreRate = 0;
     oxygenRate = 0.5;
     oxygenCommand.w = 400;
+    drowningCommand.w = 0;
     isInstructions = 1;
     yMomentum = 0;
     onGround = 0;
     pressedLeft = 0, pressedRight = 0;
     pressedDown = 0;
+    isDrowning = 0;
     isGameOver = 0;
     createjs.Ticker.setPaused(false);
 
