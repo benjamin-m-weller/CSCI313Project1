@@ -2,7 +2,14 @@ Project Backlog:
 
 NEED (for game to be played):
 - Add documentation to top of js file
-
+- Add enemies
+- Add enemy-character collision
+	- remove enemy
+	- drop oxygen bar by 100 (or amount remaining if less than 100) -- There's 400 width total.
+- Add enemy-bullet collision
+	- remove enemy
+	- remove bullet
+	- increase score by +5000 (or some other value)
 
 POSSIBLE:
 - Add animations for character
@@ -17,15 +24,13 @@ POSSIBLE:
 		- Move along floor/platforms
 	- Enemies will take oxygen when come in contact
 		- Enemies will dissapear upon contact
-- Add weapon to shoot enemies
-	- Shoot small circles
-	- Remove circles when they hit an enemy or go off screen.
 - Make canvas bigger
 	- currently 800x600. Maybe make it 1280x720.
 	- it just seems super small right now.
 - Moving platforms
 	- the character would have to move with the platform if standing on it
 	- the oxygen tanks would have to move with the platform if on top
+- Add more tank locations (why not)
 
 
 COMPLETED THIS ITERATION
@@ -36,6 +41,11 @@ COMPLETED THIS ITERATION
 	- When you get a tank, it fill up oxygen bar half of the way
 		- drowning bar begins to drop slowly
 		- once oxygen runs out again, drowning bar begins to go up again
+- (Aaron) Add Shooting
+	- press SPACEBAR to shoot
+	- bullets shoot in the direction the character was facing when fired
+	- remove bullets when they go offscreen
+	- only allow 5 bullets on screen at once
 
 COMPLETED SECOND ITERATION
 - (Aaron) Add Score
