@@ -34,7 +34,7 @@ var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var drowningbar, drowningCommand, drowningRate = 1;
 var scoreLabel, score = 0, scoreRate = 0;
-var bullets = [], gBullet, bulletSpeed = 10;
+var bullets = [], bulletSpeed = 10;
 
 const PWidth=300; //width of the platforms
 
@@ -94,9 +94,6 @@ function init()
     // red screen (for gameOver)
     var g6 = new createjs.Graphics();
     g6.beginStroke("red").beginFill("red").drawRect(0, 0, 800, 600);
-
-    gBullet = new createjs.Graphics();
-    gBullet.beginStroke("black").beginFill("Yellow").drawCircle(0, 0, 4);
 
     oceanbackground = new createjs.Bitmap(oceanImage);
     oceanbackground.x = 0; oceanbackground.y = 0;
@@ -446,8 +443,11 @@ function movesTank()
 function createBullet()
 {
     //create temporary bullet
+    var gBullet = new createjs.Graphics();
+    gBullet.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 10);
+
     var bullet = new createjs.Shape(gBullet);
-    bullet.regX = bullet.regY = 2;
+    bullet.regX = bullet.regY = bullet.w/2;
     bullet.x = diver.x; bullet.y = diver.y;
     stage.addChild(bullet);
 
@@ -459,6 +459,15 @@ function createBullet()
     //add the bullet to the array
     bullets.push({b:bullet,m:bulletMovement});
     bullet = null;
+}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
 
 function handleKeyDown(e)
@@ -624,7 +633,15 @@ function gameOver()
     stage.addChild(gameOverText);
     stage.update();
 
+    //set visible to false
     tank.visible = false;
+    //Remove bullets on screen
+    for(i = bullets.length-1; i >= 0; i--)
+    {
+        stage.removeChild(bullets[i].b);
+        bullets[i].b = null;
+        bullets.splice(i, 1);
+    }
 
     createjs.Ticker.setPaused(true);
     redScreen.alpha = 1;
