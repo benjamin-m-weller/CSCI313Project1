@@ -27,6 +27,8 @@ POSSIBLE:
 	- the character would have to move with the platform if standing on it
 	- the oxygen tanks would have to move with the platform if on top
 
+
+COMPLETED THIS ITERATION
 - (Aaron) Add "Drowning" aspect to oxygen bar
 	- When it runs out, a second bar (red or dark blue) begins to fill up
 	- Game slows down (slow down ticker)
@@ -34,10 +36,8 @@ POSSIBLE:
 	- When you get a tank, it fill up oxygen bar half of the way
 		- drowning bar begins to drop slowly
 		- once oxygen runs out again, drowning bar begins to go up again
-	I CALL DOING THIS ONE!!!
 
-
-COMPLETED THIS ITERATION
+COMPLETED SECOND ITERATION
 - (Aaron) Add Score
 	- goes up over time
 - (Aaron) Change oxygen bar to be on the canvas rather than using HTML
@@ -51,7 +51,7 @@ COMPLETED THIS ITERATION
 	- Allow ability to reset game
 
 
-COMPLETED LAST ITERATION
+COMPLETED FIRST ITERATION
 - Create canvas
 - Create ocean floor
 - Add background
