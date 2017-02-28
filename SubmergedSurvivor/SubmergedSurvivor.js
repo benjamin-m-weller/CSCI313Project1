@@ -8,6 +8,7 @@ var queue; // LoadQueue
 var stage; // Stage
 
 //KEYS
+var KEYCODE_ENTER = 13;
 var KEYCODE_SPACE = 32;
 var KEYCODE_UP = 38;
 var KEYCODE_DOWN = 40;
@@ -33,10 +34,11 @@ var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var drowningbar, drowningCommand, drowningRate = 1;
 var scoreLabel, score = 0, scoreRate = 0;
+var bullets = [], gBullet, bulletSpeed = 10;
 
 const PWidth=300; //width of the platforms
 
-var pB; // pause button
+//var pB; // pause button
 var pausedLabel;
 var isInstructions = 1;
 var isDrowning = 0;
@@ -92,6 +94,9 @@ function init()
     // red screen (for gameOver)
     var g6 = new createjs.Graphics();
     g6.beginStroke("red").beginFill("red").drawRect(0, 0, 800, 600);
+
+    gBullet = new createjs.Graphics();
+    gBullet.beginStroke("black").beginFill("Yellow").drawCircle(0, 0, 4);
 
     oceanbackground = new createjs.Bitmap(oceanImage);
     oceanbackground.x = 0; oceanbackground.y = 0;
@@ -190,7 +195,7 @@ function init()
     stage.update();
 
     //Create text for instructions
-    var instructions = new createjs.Text("Quickly! Gather Oxygen Tanks to stay alive!\nUse the ARROW KEYS to move left, right, up and down!\n\nPress SPACEBAR to begin!", "bold 25px Arial", "white");
+    var instructions = new createjs.Text("Quickly! Gather Oxygen Tanks to stay alive!\nPress the ARROW KEYS to move left, right, up and down!\nPress SPACEBAR to shoot enemies!\n\nPress ENTER to begin!", "bold 25px Arial", "white");
     instructions.x = 400; instructions.y = 70;
     instructions.textAlign = "center";
     stage.addChild(instructions);
@@ -213,11 +218,16 @@ function init()
 	
 }
 
+/*----------\
+| Game Loop |
+\----------*/
 function tick(event) {
     if (!event.paused)
     {
 
-        //Left and Right controls
+        /*------------------------\
+        | Left and Right Controls |
+        \------------------------*/
         switch (xKeyHeld)
         {
             case "LEFT":
@@ -234,7 +244,9 @@ function tick(event) {
                 break;
         }
 
-        //Up control
+        /*-----------\
+        | Up Control |
+        \-----------*/
         if (yKeyHeld == "UP")
         {
             if (diver.y > 20) //Prevents character from swimming too high out of view
@@ -242,7 +254,9 @@ function tick(event) {
             onGround = 0;
         }
 
-        //GRAVITY
+        /*--------\
+        | Gravity |
+        \--------*/
         if (diver.y < 545 - diverChangeY) //Prevents character from falling through the floor
         {
             //Check if on platforms
@@ -278,10 +292,14 @@ function tick(event) {
                 diver.y += yMomentum;
         }
         
-        //Going to check and see if the diver collided with the tank.
+        /*---------------\
+        | Tank Collision |
+        \---------------*/
         checkTankCollision();
 
-        //Oxygen bar
+        /*-----------\
+        | Oxygen Bar |
+        \-----------*/
         if(oxygenCommand.w > 0)
         {
             oxygenCommand.w -= oxygenRate;
@@ -298,7 +316,9 @@ function tick(event) {
 
         }
 
-        //Drowning
+        /*---------\
+        | Drowning |
+        \---------*/
         if(isDrowning == 1)
         {
             drowningCommand.w += drowningRate;
@@ -315,7 +335,7 @@ function tick(event) {
         }
         else if(drowningCommand.w > 0) //lower if now drowning
         {
-            drowningCommand.w -= 0.05; //drowning bar slowly drains
+            //drowningCommand.w -= 0.05; //drowning bar slowly drains
             if(redScreen.alpha == 0.3)
             {
                 createjs.Tween.get(redScreen).to({alpha: 0}, 500);
@@ -323,10 +343,29 @@ function tick(event) {
             }
         }
         
-
+        /*--------\
+        | Bullets |
+        \--------*/
+        if(bullets.length > 0)
+        {
+            //checking all bullets in array
+            for(i = bullets.length-1; i >= 0; i--)
+            {
+                //removing bullets
+                if(bullets[i].b.x < -40 || bullets[i].b.x > 840)
+                {
+                    stage.removeChild(bullets[i].b);
+                    bullets[i].b = null;
+                    bullets.splice(i, 1);
+                }
+                //moving bullets 
+                else
+                    bullets[i].b.x += bullets[i].m;
+            }
+        }
+        
         stage.update();
     }
-
 }
 
 function onPlatform(p) 
@@ -388,10 +427,6 @@ function movesTank()
 		{
 			break;
 		}
-		else
-		{
-			continue;
-		}
 	}
 	
 	//Whatever value the for loop stops at indicates the index of the location that will be removed.
@@ -408,6 +443,24 @@ function movesTank()
 	
 }
 
+function createBullet()
+{
+    //create temporary bullet
+    var bullet = new createjs.Shape(gBullet);
+    bullet.regX = bullet.regY = 2;
+    bullet.x = diver.x; bullet.y = diver.y;
+    stage.addChild(bullet);
+
+    //determine the direction/speed of the bullet
+    var bulletMovement = bulletSpeed;
+    if(playerDirection == "LEFT")
+        bulletMovement *= -1;
+
+    //add the bullet to the array
+    bullets.push({b:bullet,m:bulletMovement});
+    bullet = null;
+}
+
 function handleKeyDown(e)
 {
     //cross browser issues
@@ -420,6 +473,11 @@ function handleKeyDown(e)
     switch (e.keyCode)
     {
         case KEYCODE_SPACE:
+            if(bullets.length < 5) //limits to 5 bullets on screen
+                createBullet();
+            break;
+
+        case KEYCODE_ENTER:
             if(isGameOver == 0)
                 pause();
             else
@@ -532,13 +590,13 @@ function pause()
     if (createjs.Ticker.getPaused())
     {
         createjs.Ticker.setPaused(false);
-        pB.textContent="Pause Game";
+        //pB.textContent="Pause Game";
         pausedLabel.visible = false;
         stage.update();
     }
     else {
         createjs.Ticker.setPaused(true);
-        pB.textContent="Paused";
+        //pB.textContent="Paused";
         if(isInstructions == 0)
         {
             pausedLabel.visible = true;
@@ -560,7 +618,7 @@ function gameOver()
     pausedLabel.text = "YOU DROWNED"
     pausedLabel.visible = true;
 
-    var gameOverText = new createjs.Text("Click SPACEBAR to play again!", "bold 30px Arial", "white");
+    var gameOverText = new createjs.Text("Press ENTER to play again!", "bold 30px Arial", "white");
     gameOverText.textAlign = "center";
     gameOverText.x = 400; gameOverText.y = 300;
     stage.addChild(gameOverText);
@@ -589,6 +647,7 @@ function resetGame()
     pressedDown = 0;
     isDrowning = 0;
     isGameOver = 0;
+    playerDirection = "RIGHT";
     createjs.Ticker.setPaused(false);
 
     //removes all children from stage. Saves memory (i think)
