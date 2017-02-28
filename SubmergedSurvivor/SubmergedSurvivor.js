@@ -222,11 +222,13 @@ function tick(event) {
         {
             case "LEFT":
                 diver.x -= 6;
+                diver.rotation = -20;
                 if (diver.x <= -38) // pacman/mario bros logic
                     diver.x = 832;
                 break;
             case "RIGHT":
                 diver.x += 6;
+                diver.rotation = 20;
                 if (diver.x >= 838)
                     diver.x = -32
                 break;
@@ -275,26 +277,26 @@ function tick(event) {
             if (yMomentum < 0)
                 diver.y += yMomentum;
         }
-		
-		//Going to check and see if the diver collided with the tank.
-		checkTankCollision();
+        
+        //Going to check and see if the diver collided with the tank.
+        checkTankCollision();
 
         //Oxygen bar
         if(oxygenCommand.w > 0)
         {
             oxygenCommand.w -= oxygenRate;
-			isDrowning = 0;
+            isDrowning = 0;
 
-			//Adding to the score
-			score++;
-			scoreLabel.text = "Score: " + score;
+            //Adding to the score
+            score++;
+            scoreLabel.text = "Score: " + score;
         }
-		else
-		{
+        else
+        {
             oxygenCommand.w = 0; //Makes it look cleaner when gameover.
             isDrowning = 1;
 
-		}
+        }
 
         //Drowning
         if(isDrowning == 1)
@@ -320,12 +322,14 @@ function tick(event) {
                 createjs.Ticker.setFPS(60);                
             }
         }
-		
+        
+
         stage.update();
     }
+
 }
 
-function onPlatform(p)
+function onPlatform(p) 
 {
     //On top of platform
     if (yMomentum >= 0 && pressedDown == 0 &&
@@ -474,7 +478,7 @@ function handleKeyUp(e)
             if (pressedLeft == 1) //Checks to see if left key is still pressed down
             {
                 xKeyHeld = "LEFT";
-                
+
                 if (playerDirection != "LEFT") //Should diver change direction?
                 {
                     diver.scaleX *= -1;
@@ -482,7 +486,10 @@ function handleKeyUp(e)
                 }
             }               
             else
+            {
+                diver.rotation = 0;
                 xKeyHeld = "NONE";
+            }
             break;
 
         case KEYCODE_A:
@@ -499,7 +506,10 @@ function handleKeyUp(e)
                 }
             }                
             else
+            {
+                diver.rotation = 0;
                 xKeyHeld = "NONE";
+            }
             break;
 
         case KEYCODE_W:
