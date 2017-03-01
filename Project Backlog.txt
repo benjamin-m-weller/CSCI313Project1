@@ -30,6 +30,7 @@ POSSIBLE:
 - Moving platforms
 	- the character would have to move with the platform if standing on it
 	- the oxygen tanks would have to move with the platform if on top
+- Move code in tick() into different methods to make tick() cleaner.
 - Add more tank locations (why not)
 
 
