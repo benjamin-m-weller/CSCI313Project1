@@ -64,12 +64,12 @@ function init()
 
     var diverImage = queue.getResult("bigdaddy");
     var tankImage = queue.getResult("tank");
-    var oceanImage = queue.getResult("oceanbackground");
+    //	var oceanImage = queue.getResult("oceanbackground");
     var redarrowImage = queue.getResult("redarrow");
 
     // floor rectangle
     var g1 = new createjs.Graphics();
-    g1.beginStroke("black").beginFill("#E5CF7F").drawRect(0, 550, 800, 50);
+    g1.beginStroke("black").beginFill("#E5CF7F").drawRect(0, 670, 1280, 50);
 
     // platform1 rectangle
     var g2 = new createjs.Graphics();
@@ -77,7 +77,7 @@ function init()
 
     // black screen
     var g3 = new createjs.Graphics();
-    g3.beginStroke("black").beginFill("black").drawRect(0, 0, 800, 600);
+    g3.beginStroke("black").beginFill("black").drawRect(0, 0, 1280, 720);
 
     // oxygen bar black background  
     var g4 = new createjs.Graphics();
@@ -93,60 +93,60 @@ function init()
 
     // red screen (for gameOver)
     var g6 = new createjs.Graphics();
-    g6.beginStroke("red").beginFill("red").drawRect(0, 0, 800, 600);
+    g6.beginStroke("red").beginFill("red").drawRect(0, 0, 1280, 720);
 
-    oceanbackground = new createjs.Bitmap(oceanImage);
-    oceanbackground.x = 0; oceanbackground.y = 0;
-    stage.addChild(oceanbackground);
-    stage.update();
+    // oceanbackground = new createjs.Bitmap(oceanImage);
+    // oceanbackground.x = 0; oceanbackground.y = 0;
+    // stage.addChild(oceanbackground);
+    // stage.update();
 
     floor = new createjs.Shape(g1);
     stage.addChild(floor);
     stage.update();
 
     platform1 = new createjs.Shape(g2);
-    platform1.x = 250; platform1.y = 250;
+    platform1.x = 490; platform1.y = 345;
     stage.addChild(platform1);
     stage.update();
 
     platform2 = new createjs.Shape(g2);
-    platform2.x = -138; platform2.y = 100;
+    platform2.x = -138; platform2.y = 122;
     stage.addChild(platform2);
     stage.update();
 
     platform3 = new createjs.Shape(g2);
-    platform3.x = 638; platform3.y = 100;
+    platform3.x = 1118; platform3.y = 122;
     stage.addChild(platform3);
     stage.update();
 
     platform4 = new createjs.Shape(g2);
-    platform4.x = -138; platform4.y = 400;
+    platform4.x = -138; platform4.y = 487;
     stage.addChild(platform4);
     stage.update();
 
     platform5 = new createjs.Shape(g2);
-    platform5.x = 638; platform5.y = 400;
+    platform5.x = 1118; platform5.y = 487;
     stage.addChild(platform5);
     stage.update();
 
     oxygenLabel = new createjs.Text("Oxygen: ", "bold 25px Arial", "#434343");
-    oxygenLabel.x = 30; oxygenLabel.y = 562;
+    oxygenLabel.x = 30; oxygenLabel.y = 685;
     stage.addChild(oxygenLabel);
     stage.update();
 
     oxygenBarBack = new createjs.Shape(g4);
-    oxygenBarBack.x = 140; oxygenBarBack.y = 565;
+    oxygenBarBack.x = 140; oxygenBarBack.y = 685;
     stage.addChild(oxygenBarBack);
     stage.update();
 
     oxygenBar = new createjs.Shape(g5);    
-    oxygenBar.x = 140; oxygenBar.y = 565;
+    oxygenBar.x = 140; oxygenBar.y = 685;
     oxygenCommand = oxygenBar.graphics.drawRect(0, 0, 400, 25).command;
     stage.addChild(oxygenBar);
     stage.update();
 
     drowningBar = new createjs.Shape(g7);
-    drowningBar.x = 140; drowningBar.y = 565;
+    drowningBar.x = 140; drowningBar.y = 685;
     drowningCommand = drowningBar.graphics.drawRect(0, 0, 0, 25).command;
     drowningBar.alpha = 0.5;
     stage.addChild(drowningBar);
@@ -158,7 +158,7 @@ function init()
     stage.update();
 
     scoreLabel = new createjs.Text("Score: " + score, "bold 25px Arial", "#434343");
-    scoreLabel.x = 580; scoreLabel.y = 562;
+    scoreLabel.x = 580; scoreLabel.y = 685;
     stage.addChild(scoreLabel);
     stage.update();
 
@@ -166,34 +166,38 @@ function init()
     stage.addChild(blackScreen);
     stage.update();
 
+	//Arrows
+	
+	//{x:630, y:325}, //middle platform
+	
     redarrowL = new createjs.Bitmap(redarrowImage);
-    redarrowL.x = 330; redarrowL.y = 227;
+    redarrowL.x = 567; redarrowL.y = 320;
     stage.addChild(redarrowL);
     stage.update();
 
     redarrowR = new createjs.Bitmap(redarrowImage);
-    redarrowR.x = 455; redarrowR.y = 227;
+    redarrowR.x = 693; redarrowR.y = 320;
     redarrowR.regX = redarrowR.image.width/2;
     redarrowR.scaleX *= -1;
     stage.addChild(redarrowR);
     stage.update();
 
     tank = new createjs.Bitmap(tankImage);
-    tank.x = 390; tank.y = 230;
+    tank.x = 630; tank.y = 325;
     stage.addChild(tank);
     stage.update();
 
     diver = new createjs.Bitmap(diverImage);
     diverChangeX = diver.image.width/2;
     diverChangeY = diver.image.height/2;
-    diver.x = 400; diver.y = 450;
+    diver.x = 640; diver.y = 570;
     diver.regX = 20; diver.regY = 23; //set regX & refY to center (40x46)    
     stage.addChild(diver);
     stage.update();
 
     //Create text for instructions
     var instructions = new createjs.Text("Quickly! Gather Oxygen Tanks to stay alive!\nPress the ARROW KEYS to move left, right, up and down!\nPress SPACEBAR to shoot enemies!\n\nPress ENTER to begin!", "bold 25px Arial", "white");
-    instructions.x = 400; instructions.y = 70;
+    instructions.x = 640; instructions.y = 70;
     instructions.textAlign = "center";
     stage.addChild(instructions);
     stage.update();
@@ -205,7 +209,7 @@ function init()
     createjs.Tween.get(redarrowR).to({alpha: 0}, 500);
 
     pausedLabel = new createjs.Text("PAUSED", "bold 70px Arial", "white");
-    pausedLabel.x = 400; pausedLabel.y = 120;
+    pausedLabel.x = 640; pausedLabel.y = 120;
     pausedLabel.textAlign = "center";
     pausedLabel.visible = false;
     stage.addChild(pausedLabel);
@@ -231,12 +235,12 @@ function tick(event) {
                 diver.x -= 6;
                 diver.rotation = -20;
                 if (diver.x <= -38) // pacman/mario bros logic
-                    diver.x = 832;
+                    diver.x = 1312;
                 break;
             case "RIGHT":
                 diver.x += 6;
                 diver.rotation = 20;
-                if (diver.x >= 838)
+                if (diver.x >= 1312)
                     diver.x = -32
                 break;
         }
@@ -254,7 +258,7 @@ function tick(event) {
         /*--------\
         | Gravity |
         \--------*/
-        if (diver.y < 545 - diverChangeY) //Prevents character from falling through the floor
+        if (diver.y < 665 - diverChangeY) //Prevents character from falling through the floor
         {
             //Check if on platforms
             if (onPlatform(platform1) == 1 || onPlatform(platform2) || onPlatform(platform3) ||
@@ -405,14 +409,14 @@ function movesTank()
 {
 	//I have a list of locations that the tank could be in
 	var myArray=[
-        {x:390, y:230}, //middle platform
-        {x:390, y:530}, //middle floor
-        {x:10, y:80}, //top left platform
-        {x:10, y:380}, //bottom left platform
-        {x:10, y:530}, //left floor
-        {x:770, y:80}, //top right platform
-        {x:770, y:380}, //bottom right platform
-        {x:770, y:530} //right floor
+        {x:630, y:325}, //middle platform
+        {x:630, y:650}, //middle floor
+        {x:10, y:102}, //top left platform
+        {x:10, y:467}, //bottom left platform
+        {x:10, y:650}, //left floor
+        {x:1250, y:102}, //top right platform
+        {x:1250, y:467}, //bottom right platform
+        {x:1250, y:650} //right floor
         ];
 		
 	//I take the current location of the tank, remove it, and then randomly place the tank in another location.
@@ -619,7 +623,7 @@ function gameOver()
     //Reposition scoreLabel
     scoreLabel.color = "white";
     scoreLabel.font = "bold 50px Arial";
-    scoreLabel.x = 400; scoreLabel.y = 500;
+    scoreLabel.x = 640; scoreLabel.y = 620;
     scoreLabel.textAlign = "center";
     stage.swapChildren(diver, scoreLabel);
     
@@ -629,7 +633,7 @@ function gameOver()
 
     var gameOverText = new createjs.Text("Press ENTER to play again!", "bold 30px Arial", "white");
     gameOverText.textAlign = "center";
-    gameOverText.x = 400; gameOverText.y = 300;
+    gameOverText.x = 640; gameOverText.y = 300;
     stage.addChild(gameOverText);
     stage.update();
 
