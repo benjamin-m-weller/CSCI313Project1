@@ -33,7 +33,8 @@ var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var drowningbar, drowningCommand, drowningRate = 1;
-var scoreLabel, score = 0, scoreRate = 0;
+var staminaLabel, staminaBar, staminaBarBack, staminaCommand, staminaRate = 2, isFiring = 0;
+var scoreLabel, score = 0, scoreRate = 0, staminaRecover = 0;;
 var bullets = [], bulletSpeed = 10;
 
 const PWidth=300; //width of the platforms
@@ -90,6 +91,14 @@ function init()
     // drowning bar
     var g7 = new createjs.Graphics();
     g7.beginStroke("black").beginFill("red"); //.drawRect() is set in a command later
+
+    // stamina bar black background  
+    var g8 = new createjs.Graphics();
+    g8.beginStroke("black").beginFill("#434343").drawRect(0, 0, 300, 25);
+
+    // stamina bar
+    var g9 = new createjs.Graphics();
+    g9.beginStroke("black").beginFill("green"); //.drawRect() is set in a command later
 
     // red screen (for gameOver)
     var g6 = new createjs.Graphics();
@@ -150,6 +159,22 @@ function init()
     drowningCommand = drowningBar.graphics.drawRect(0, 0, 0, 25).command;
     drowningBar.alpha = 0.5;
     stage.addChild(drowningBar);
+    stage.update();
+
+    staminaLabel = new createjs.Text("Stamina: ", "bold 25px Arial", "#434343");
+    staminaLabel.x = 835; staminaLabel.y = 685;
+    stage.addChild(staminaLabel);
+    stage.update();
+
+    staminaBarBack = new createjs.Shape(g8);
+    staminaBarBack.x = 950; staminaBarBack.y = 685;
+    stage.addChild(staminaBarBack);
+    stage.update();
+
+    staminaBar = new createjs.Shape(g9);
+    staminaBar.x = 950; staminaBar.y = 685;
+    staminaCommand = staminaBar.graphics.drawRect(0, 0, 300, 25).command;
+    stage.addChild(staminaBar);
     stage.update();
 
     redScreen = new createjs.Shape(g6);
@@ -235,13 +260,13 @@ function tick(event) {
                 diver.x -= 6;
                 diver.rotation = -20;
                 if (diver.x <= -38) // pacman/mario bros logic
-                    diver.x = 1312;
+                    diver.x = 1318;
                 break;
             case "RIGHT":
                 diver.x += 6;
                 diver.rotation = 20;
-                if (diver.x >= 1312)
-                    diver.x = -32
+                if (diver.x >= 1318)
+                    diver.x = -38
                 break;
         }
 
@@ -258,7 +283,7 @@ function tick(event) {
         /*--------\
         | Gravity |
         \--------*/
-        if (diver.y < 665 - diverChangeY) //Prevents character from falling through the floor
+        if (diver.y < 670 - diverChangeY) //Prevents character from falling through the floor
         {
             //Check if on platforms
             if (onPlatform(platform1) == 1 || onPlatform(platform2) || onPlatform(platform3) ||
@@ -286,7 +311,7 @@ function tick(event) {
         { 
             if (onGround == 0) //Adjusts to floor
             {
-                diver.y = 550 - diverChangeY;
+                diver.y = 670 - diverChangeY;
                 onGround = 1;
             }               
             if (yMomentum < 0)
@@ -353,7 +378,7 @@ function tick(event) {
             for(i = bullets.length-1; i >= 0; i--)
             {
                 //removing bullets
-                if(bullets[i].b.x < -40 || bullets[i].b.x > 840)
+                if(bullets[i].b.x < -40 || bullets[i].b.x > 1320)
                 {
                     stage.removeChild(bullets[i].b);
                     bullets[i].b = null;
@@ -364,7 +389,39 @@ function tick(event) {
                     bullets[i].b.x += bullets[i].m;
             }
         }
+
+        /*--------\
+        | Stamina |
+        \--------*/
+        if(staminaCommand.w <= 0)
+        {
+            staminaCommand.w = 0;
+
+            staminaRecover++;
+            if(staminaRecover >= 120)
+            {
+                staminaRecover = 0;
+                staminaCommand.w = 1;
+                isFiring = 0;
+            }
+
+        }
+        else if(isFiring == 1)
+        {
+            staminaRecover++;
+            if(staminaRecover >= 120)
+            {
+                staminaRecover = 0;
+                isFiring = 0;
+            }
+        }
+        else if(staminaCommand.w < 295)
+            staminaCommand.w += staminaRate;
+        else
+            staminaCommand.w = 300;
         
+
+
         stage.update();
     }
 }
@@ -463,6 +520,11 @@ function createBullet()
     //add the bullet to the array
     bullets.push({b:bullet,m:bulletMovement});
     bullet = null;
+
+    //decrease stamina bar
+    staminaCommand.w -= 50;
+    if(staminaRecover == 0)
+        isFiring = 1;
 }
 
 function getRandomColor() {
@@ -486,7 +548,7 @@ function handleKeyDown(e)
     switch (e.keyCode)
     {
         case KEYCODE_SPACE:
-            if(bullets.length < 5) //limits to 5 bullets on screen
+            if(staminaCommand.w > 0) //Doesn't allow player to shoot while out of stamina
                 createBullet();
             break;
 
