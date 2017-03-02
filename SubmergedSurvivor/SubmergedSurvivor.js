@@ -409,7 +409,7 @@ function tick(event) {
         else if(isFiring == 1)
         {
             staminaRecover++;
-            if(staminaRecover >= 120)
+            if(staminaRecover >= 30)
             {
                 staminaRecover = 0;
                 isFiring = 0;
