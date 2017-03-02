@@ -33,8 +33,9 @@ var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var drowningbar, drowningCommand, drowningRate = 1;
-var scoreLabel, score = 0, scoreRate = 0;
+var scoreLabel, score = 0, scoreRate = 0, tanksCollected = 0;;
 var bullets = [], bulletSpeed = 10;
+var fish = [];
 
 const PWidth=300; //width of the platforms
 
@@ -44,12 +45,26 @@ var isInstructions = 1;
 var isDrowning = 0;
 var isGameOver = 0;
 
+//sprite sheets
+var magikarpSheet;
+magikarpData = {
+    images:["magikarpsubsheet.png"],
+    frames:[
+      [5, 150, 63, 69], [73, 150, 63, 69], [141, 150, 63, 69]
+    ],
+    animations:{ 
+      stand: 0,
+      moveLeft: [0, 2, 0.3]
+    }
+};
+
 function load()
 {
     queue = new createjs.LoadQueue(false);
     queue.addEventListener( "complete", init );
     queue.loadManifest([{id:"bigdaddy",src:"bigdaddy.png"},{id:"tank",src:"tank.png"},
-        {id:"oceanbackground",src:"oceanbackground.png"},{id:"redarrow",src:"redarrow.png"}]);
+        {id:"oceanbackground",src:"oceanbackground.png"},{id:"redarrow",src:"redarrow.png"},
+        {id:"magikarpImage",src:"magikarpsubsheet.png"}]);
 
     document.onkeyup = handleKeyUp.bind(this);
     document.onkeydown = handleKeyDown.bind(this);
@@ -67,6 +82,9 @@ function init()
     var oceanImage = queue.getResult("oceanbackground");
     var redarrowImage = queue.getResult("redarrow");
 
+    // spritesheets
+    magikarpSheet = new createjs.SpriteSheet(magikarpData);
+    
     // floor rectangle
     var g1 = new createjs.Graphics();
     g1.beginStroke("black").beginFill("#E5CF7F").drawRect(0, 550, 800, 50);
@@ -360,9 +378,62 @@ function tick(event) {
                     bullets[i].b.x += bullets[i].m;
             }
         }
+
+        /*-----\
+        | Fish |
+        \-----*/
+        //Fish Collisions
+        if(fish.length > 0)
+        {
+            //checking all fish in array
+            for(i = fish.length-1; i >= 0; i--)
+            {
+                //removing fish
+                if(fish[i].f.x < -40 || checkFishCollision(fish[i].f) == 0)
+                {
+                    stage.removeChild(fish[i].f);
+                    fish[i].f = null;
+                    fish.splice(i, 1);
+                }
+
+            }
+        }
+        //Adding Fish
+        if(score % 200 == 0)
+            createFish();
+
+
+
+
         
         stage.update();
     }
+}
+
+function checkFishCollision(currentFish)
+{
+
+    for(i = bullets.length-1; i >= 0; i--)
+    {
+        //get point for fish and bullet
+        var point = currentFish.localToLocal(31.5, 34.5, bullets[i].b);
+
+        if(bullets[i].b.hitTest(point.x, point.y))
+        {
+            //remove bullet
+            stage.removeChild(bullets[i].b);
+            bullets[i].b = null;
+            bullets.splice(i, 1);
+
+            //increase score
+            scoreRate += 100
+            score += (500 + scoreRate/2)
+
+            //remove fish
+            return 0;
+        }
+    }
+
 }
 
 function onPlatform(p) 
@@ -394,6 +465,7 @@ function checkTankCollision()
         oxygenCommand.w = 400;
 
         //Adjust score/difficulty
+        tanksCollected++;
         scoreRate += 100;
 		score += (1000 + scoreRate);
         if(oxygenRate <= 3.0) //Dropping faster is too hard
@@ -438,6 +510,26 @@ function movesTank()
 	
 	stage.update();
 	
+}
+
+function createFish()
+{
+    //create temporary magikarp
+    var magik = new createjs.Sprite(magikarpSheet,'moveLeft');
+    magik.addEventListener("change", swimLeft);
+    magik.regX = 31.5; magik.regY = 34.5;
+    magik.x = 840;
+    magik.y = 50 + Math.floor(Math.random() * 400);
+    stage.addChild(magik);
+
+    //add magikarp to the array
+    fish.push({f:magik,m:-2});
+    magik = null;
+}
+
+function swimLeft(e) {
+    var s = e.target;
+    s.x -= 2;
 }
 
 function createBullet()
