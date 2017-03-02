@@ -47,6 +47,10 @@ COMPLETED THIS ITERATION
 	- bullets shoot in the direction the character was facing when fired
 	- remove bullets when they go offscreen
 	- only allow 5 bullets on screen at once
+- (Ben) Increased canvas size to 1280x720
+- (Aaron) Added stamina bar for shooting
+	- doesn't allow to shoot when stamina bar is empty
+	- requires recovery period after shooting or running out of stamina.
 
 COMPLETED SECOND ITERATION
 - (Aaron) Add Score

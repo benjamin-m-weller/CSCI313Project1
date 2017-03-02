@@ -33,7 +33,12 @@ var floor, platform1, platform2, platform3, platform4, platform5;
 var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var drowningbar, drowningCommand, drowningRate = 1;
+<<<<<<< HEAD
 var scoreLabel, score = 0, scoreRate = 0, tanksCollected = 0;;
+=======
+var staminaLabel, staminaBar, staminaBarBack, staminaCommand, staminaRate = 2, isFiring = 0;
+var scoreLabel, score = 0, scoreRate = 0, staminaRecover = 0;;
+>>>>>>> 5ce6030c8d718548be74a28299a85711e1311e67
 var bullets = [], bulletSpeed = 10;
 var fish = [];
 
@@ -79,7 +84,7 @@ function init()
 
     var diverImage = queue.getResult("bigdaddy");
     var tankImage = queue.getResult("tank");
-    var oceanImage = queue.getResult("oceanbackground");
+    //	var oceanImage = queue.getResult("oceanbackground");
     var redarrowImage = queue.getResult("redarrow");
 
     // spritesheets
