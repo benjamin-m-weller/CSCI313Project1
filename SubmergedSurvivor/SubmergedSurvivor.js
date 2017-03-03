@@ -419,17 +419,23 @@ function tick(event) {
             for(i = fish.length-1; i >= 0; i--)
             {
                 //removing fish
-                if(fish[i].f.x < -40 || checkFishCollision(fish[i].f) == 0)
+                if(fish[i].f.x < 100)
                 {
                     stage.removeChild(fish[i].f);
                     fish[i].f = null;
                     fish.splice(i, 1);
+                    break;
+                }
+                else
+                {
+                    checkFishCollision(fish[i].f, i);
+                    break;
                 }
 
             }
         }
         //Adding Fish
-        //if(score % 200 == 0)
+        if(score % 200 == 0)
             createFish();
 
 
@@ -467,15 +473,15 @@ function tick(event) {
     }
 }
 
-function checkFishCollision(currentFish)
+function checkFishCollision(currentFish, fishIndex)
 {
 
     for(i = bullets.length-1; i >= 0; i--)
     {
         //get point for fish and bullet
-        var point = currentFish.localToLocal(31.5, 34.5, bullets[i].b);
+        var point = bullets[i].b.localToLocal(20, 20, currentFish);
 
-        if(bullets[i].b.hitTest(point.x, point.y))
+        if(currentFish.hitTest(point.x, point.y))
         {
             //remove bullet
             stage.removeChild(bullets[i].b);
@@ -487,7 +493,11 @@ function checkFishCollision(currentFish)
             score += (500 + scoreRate/2)
 
             //remove fish
-            return 0;
+            stage.removeChild(fish[fishIndex].f);
+            fish[fishIndex].f = null;
+            fish.splice(fishIndex, 1);
+
+            break;
         }
     }
 
@@ -525,7 +535,7 @@ function checkTankCollision()
         tanksCollected++;
         scoreRate += 100;
 		score += (1000 + scoreRate);
-        if(oxygenRate <= 3.0) //Dropping faster is too hard
+        if(oxygenRate <= 2.5) //Dropping faster is too hard
             oxygenRate += 0.1;
 	}
 }
@@ -576,7 +586,7 @@ function createFish()
     magik.addEventListener("change", swimLeft);
     magik.regX = 31.5; magik.regY = 34.5;
     magik.x = 1320;
-    magik.y = 50 + Math.floor(Math.random() * 650);
+    magik.y = 50 + Math.floor(Math.random() * 600);
     stage.addChild(magik);
 
     //add magikarp to the array
@@ -593,7 +603,7 @@ function createBullet()
 {
     //create temporary bullet
     var gBullet = new createjs.Graphics();
-    gBullet.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 10);
+    gBullet.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 20);
 
     var bullet = new createjs.Shape(gBullet);
     bullet.regX = bullet.regY = bullet.w/2;
