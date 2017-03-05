@@ -90,7 +90,7 @@ function init()
 	
     var diverImage = queue.getResult("bigdaddy");
     var tankImage = queue.getResult("tank");
-    //	var oceanImage = queue.getResult("oceanbackground");
+    var oceanImage = queue.getResult("oceanbackground");
     var redarrowImage = queue.getResult("redarrow");
 
     // spritesheets
@@ -132,10 +132,10 @@ function init()
     var g6 = new createjs.Graphics();
     g6.beginStroke("red").beginFill("red").drawRect(0, 0, 1280, 720);
 
-    // oceanbackground = new createjs.Bitmap(oceanImage);
-    // oceanbackground.x = 0; oceanbackground.y = 0;
-    // stage.addChild(oceanbackground);
-    // stage.update();
+    oceanbackground = new createjs.Bitmap(oceanImage);
+    oceanbackground.x = 0; oceanbackground.y = 0;
+    stage.addChild(oceanbackground);
+    stage.update();
 
     floor = new createjs.Shape(g1);
     stage.addChild(floor);
