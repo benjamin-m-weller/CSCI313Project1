@@ -38,6 +38,7 @@ var staminaLabel, staminaBar, staminaBarBack, staminaCommand, staminaRate = 2, i
 var scoreLabel, score = 0, scoreRate = 0, staminaRecover = 0;;
 var bullets = [], bulletSpeed = 10;
 var fish = [];
+var bubbleSound;
 
 const PWidth=300; //width of the platforms
 
@@ -66,7 +67,10 @@ function load()
     queue.addEventListener( "complete", init );
     queue.loadManifest([{id:"bigdaddy",src:"bigdaddy.png"},{id:"tank",src:"tank.png"},
         {id:"oceanbackground",src:"oceanbackground.png"},{id:"redarrow",src:"redarrow.png"},
-        {id:"magikarpImage",src:"magikarpsubsheet.png"}]);
+        {id:"magikarpImage",src:"magikarpsubsheet.png"},
+		{id: "bubbleSound", src:"bubble.mp3"}]);
+	queue.installPlugin(createjs.Sound);	
+	
 
     document.onkeyup = handleKeyUp.bind(this);
     document.onkeydown = handleKeyDown.bind(this);
@@ -78,7 +82,12 @@ function load()
 function init()
 {
     stage = new createjs.Stage("canvas");
-
+	
+	//Sound code doesn't work
+	// bubbleSound=queue.getResult("bubbleSound");
+	// createjs.Sound.registerSound("bubble.mp3", "bubbleSound", 0);
+	// createjs.Sound.play("bubbleSound");
+	
     var diverImage = queue.getResult("bigdaddy");
     var tankImage = queue.getResult("tank");
     //	var oceanImage = queue.getResult("oceanbackground");
