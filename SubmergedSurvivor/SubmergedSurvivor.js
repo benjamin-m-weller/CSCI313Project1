@@ -84,9 +84,9 @@ function init()
     stage = new createjs.Stage("canvas");
 	
 	//Sound code doesn't work
-	bubbleSound=queue.getResult("bubbleSound");
-	createjs.Sound.registerSound("bubble.mp3", "bubbleSound", 0);
-	createjs.Sound.play("bubbleSound");
+	// bubbleSound=queue.getResult("bubbleSound");
+	// createjs.Sound.registerSound("bubble.mp3", "bubbleSound", 0);
+	// createjs.Sound.play("bubbleSound");
 	
     var diverImage = queue.getResult("bigdaddy");
     var tankImage = queue.getResult("tank");
@@ -219,6 +219,9 @@ function init()
     stage.addChild(blackScreen);
     stage.update();
 
+	//Arrows
+	
+	//{x:630, y:325}, //middle platform
 	
     redarrowL = new createjs.Bitmap(redarrowImage);
     redarrowL.x = 567; redarrowL.y = 320;
@@ -435,16 +438,9 @@ function tick(event) {
                     stage.update();
                     break;
                 }
-<<<<<<< HEAD
 
                 //fish collision with bulletes
                 if(checkBulletCollision(i) == 1)
-=======
-                else
-                {
-                    checkFishCollision(fish[i].f, i);
-					//checkDiverAndFishCollision(fish[i].f, i);
->>>>>>> 8a0572d77c620b7fc4b4db210822f6abd01546b0
                     break;
 
                 //fish collision with diver
@@ -505,36 +501,7 @@ function tick(event) {
     }
 }
 
-<<<<<<< HEAD
 function checkFishCollision(fishI)
-=======
-/*This checking results in an unplayable game for no reason that I can oncover.
-if there is something I'm missing (I'm unsure of exactly what) please text me
-so that I can faceplam due to a simple error that cost ~2 hours of time.
-
-*/ 
-/*
-function checkDiverAndFishCollision(currentFish, fishIndex)
-{
-	var point = diver.localToLocal(20, 23, currentFish);
-	
-	if(currentFish.hitTest(point.x, point.y))
-	{
-		//Decrement oxygenBar
-		oxygenCommand.w-=20; //Randomly picked number
-		
-		//Decrease score
-		score-=100;
-		
-		//Removes fish
-		stage.removeChild(fish[fishIndex].f);
-        fish[fishIndex].f = null;
-        fish.splice(fishIndex, 1);
-	}
-} */
-
-function checkFishCollision(currentFish, fishIndex)
->>>>>>> 8a0572d77c620b7fc4b4db210822f6abd01546b0
 {
  	
   	if(diver.x + 23 > fish.children[fishI].x && diver.x - 23 < fish.children[fishI].x + 93 &&
@@ -557,7 +524,6 @@ function checkFishCollision(currentFish, fishIndex)
  	
 }
 
-<<<<<<< HEAD
 function checkBulletCollision(fishI)
 {
 
@@ -576,29 +542,6 @@ function checkBulletCollision(fishI)
                 bullets[i].b = null;
                 bullets.splice(i, 1);
             }
-=======
-     for(i = bullets.length-1; i >= 0; i--)
-    {
-        //get point for fish and bullet
-        var point = bullets[i].b.localToLocal(0, 0, currentFish);
-		var point2=bullets[i].b.localToLocal(20, 20, currentFish);
-
-        if(currentFish.hitTest(point.x, point.y) ||currentFish.hitTest(point2.x, point2.y))
-        {
-			//debugging
-			var debugwidth=currentFish.w
-			var debugheight=currentFish.h
-			var debugx=currentFish.x
-			var debugy=currentFish.y
-			
-			var bulletX=bullets[i].b.x;
-			var bulletY=bullets[i].b.y;
-			
-            //remove bullet
-            stage.removeChild(bullets[i].b);
-            bullets[i].b = null;
-            bullets.splice(i, 1);
->>>>>>> 8a0572d77c620b7fc4b4db210822f6abd01546b0
 
             //increase score
             scoreRate += 100;
@@ -612,12 +555,7 @@ function checkBulletCollision(fishI)
         }
 
     }
-<<<<<<< HEAD
     return 0;
-=======
-	
-	
->>>>>>> 8a0572d77c620b7fc4b4db210822f6abd01546b0
 
 } 
 
