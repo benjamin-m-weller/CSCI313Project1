@@ -37,7 +37,8 @@ var scoreLabel, score = 0, scoreRate = 0, tanksCollected = 0;;
 var staminaLabel, staminaBar, staminaBarBack, staminaCommand, staminaRate = 2, isFiring = 0;
 var scoreLabel, score = 0, scoreRate = 0, staminaRecover = 0;;
 var bullets = [], bulletSpeed = 10;
-var fish = new createjs.Container(), fishRate = 200, fishCount = 0;;
+var fish = new createjs.Container(), fishRate = 200, fishCount = 0;
+var currentWall = 50000, wallDuration = 60, wallCount = 0;
 var bubbleSound;
 
 const PWidth=300; //width of the platforms
@@ -455,7 +456,7 @@ function tick(event) {
         }
         else
         {
-            createFish();
+            createFish("NORMAL");
             fishCount = 0;
 
             if(fishRate > 150)
@@ -464,6 +465,39 @@ function tick(event) {
                 fishRate -= 5;
             else if(fishRate > 30)
                 fishRate -= 1;
+        }
+
+        /*--------------\
+        | Walls of Fish |
+        \--------------*/
+        //Create walls of fish at certain scores throughout the game
+        if(score > currentWall)
+        {
+            createFish("WALL");
+            wallCount ++;
+
+            if(wallCount > wallDuration)
+            {
+                // Determine the next wall
+                //  AND set the next wall's duration
+                if(currentWall == 50000)
+                    currentWall = 200000;
+                else if(currentWall == 200000)
+                {
+                    currentWall = 500000;
+                    wallDuration += 30;
+                }                 
+                else if(currentWall == 500000)
+                {
+                    currentWall = 1000000;
+                    wallDuration += 30;
+                }
+                else
+                    currentWall += 1000000;
+
+                // Reset the wall counter
+                wallCount = 0;
+            }
         }
 
 
@@ -637,25 +671,33 @@ function movesTank()
 	
 }
 
-function createFish()
+function createFish(fishSpeed)
 {
     //create temporary magikarp
     var magik = new createjs.Sprite(magikarpSheet,'moveLeft');
     
-    var speed = Math.random() * 3;
-    if(speed < 1)
-    {
-        magik.addEventListener("change", swimLeft);
-    }
-    else if(speed < 2)
-    {
-        magik.addEventListener("change", swimLeftFast);
-        magik.scaleX = magik.scaleY = 1.5;
-    }
-    else
+    if(fishSpeed == "WALL")
     {
         magik.addEventListener("change", swimLeftSlow);
         magik.scaleX = magik.scaleY = 0.75;
+    }
+    else // "NORMAL"
+    {
+        var speed = Math.random() * 3;
+        if(speed < 1)
+        {
+            magik.addEventListener("change", swimLeft);
+        }
+        else if(speed < 2)
+        {
+            magik.addEventListener("change", swimLeftFast);
+            magik.scaleX = magik.scaleY = 1.5;
+        }
+        else
+        {
+            magik.addEventListener("change", swimLeftSlow);
+            magik.scaleX = magik.scaleY = 0.75;
+        }
     }
 
     //magik.addEventListener("change", swimLeft);
@@ -933,6 +975,9 @@ function resetGame()
     isGameOver = 0;
     fishRate= 200;
     fishCount = 0;
+    currentWall = 50000;
+    wallDuration = 60;
+    wallCount = 0;
     fish.removeAllChildren();
     playerDirection = "RIGHT";
     createjs.Ticker.setPaused(false);
