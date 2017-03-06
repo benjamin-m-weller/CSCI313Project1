@@ -37,7 +37,7 @@ var scoreLabel, score = 0, scoreRate = 0, tanksCollected = 0;;
 var staminaLabel, staminaBar, staminaBarBack, staminaCommand, staminaRate = 2, isFiring = 0;
 var scoreLabel, score = 0, scoreRate = 0, staminaRecover = 0;;
 var bullets = [], bulletSpeed = 10;
-var fish = [];
+var fish = new createjs.Container(), fishRate = 200, fishCount = 0;;
 var bubbleSound;
 
 const PWidth=300; //width of the platforms
@@ -248,6 +248,10 @@ function init()
     stage.addChild(diver);
     stage.update();
 
+    //initialize fish Container
+    fish = new createjs.Container();
+    stage.addChild(fish);
+
     //Create text for instructions
     var instructions = new createjs.Text("Quickly! Gather Oxygen Tanks to stay alive!\nPress the ARROW KEYS to move left, right, up and down!\nPress SPACEBAR to shoot enemies!\n\nPress ENTER to begin!", "bold 25px Arial", "white");
     instructions.x = 640; instructions.y = 70;
@@ -422,30 +426,45 @@ function tick(event) {
         | Fish |
         \-----*/
         //Fish Collisions
-        if(fish.length > 0)
+        if(fish.children.length > 0)
         {
             //checking all fish in array
-            for(i = fish.length-1; i >= 0; i--)
+            for(i = 0; i < fish.children.length; i++)
             {
                 //removing fish
-                if(fish[i].f.x < 100)
+                if(fish.children[i].x < -70)
                 {
-                    stage.removeChild(fish[i].f);
-                    fish[i].f = null;
-                    fish.splice(i, 1);
-                    break;
-                }
-                else
-                {
-                    checkFishCollision(fish[i].f, i);
+                    fish.removeChildAt(i);
+                    stage.update();
                     break;
                 }
 
+                //fish collision with bulletes
+                if(checkBulletCollision(i) == 1)
+                    break;
+
+                //fish collision with diver
+                if(checkFishCollision(i) == 1)
+                    break;
             }
         }
         //Adding Fish
-        if(score % 200 == 0)
+        if(fishCount < fishRate)
+        {
+            fishCount++;
+        }
+        else
+        {
             createFish();
+            fishCount = 0;
+
+            if(fishRate > 150)
+                fishRate -= 10;
+            else if(fishRate > 50)
+                fishRate -= 5;
+            else if(fishRate > 30)
+                fishRate -= 1;
+        }
 
 
         /*--------\
@@ -482,35 +501,63 @@ function tick(event) {
     }
 }
 
-function checkFishCollision(currentFish, fishIndex)
+function checkFishCollision(fishI)
+{
+ 	
+  	if(diver.x + 23 > fish.children[fishI].x && diver.x - 23 < fish.children[fishI].x + 93 &&
+            diver.y + 20 > fish.children[fishI].y && diver.y - 23 < fish.children[fishI].y + 69)
+ 	{
+ 		//Decrement oxygenBar
+        if(oxygenCommand.w > 50)
+ 		    oxygenCommand.w -= 50; //Randomly picked number
+        else
+            oxygenCommand.w = 0;
+ 		
+ 		//Decrease score
+ 		score-=100;
+ 		
+ 		//Removes fish
+ 		fish.removeChildAt(fishI);
+
+        return 1;
+     }
+ 	
+}
+
+function checkBulletCollision(fishI)
 {
 
-    for(i = bullets.length-1; i >= 0; i--)
+    for(var i = bullets.length-1; i >= 0; i--)
     {
-        //get point for fish and bullet
-        var point = bullets[i].b.localToLocal(20, 20, currentFish);
 
-        if(currentFish.hitTest(point.x, point.y))
+        if(bullets[i].b.x + 50 > fish.children[fishI].x && bullets[i].b.x < fish.children[fishI].x + 93 &&
+            bullets[i].b.y + 40 > fish.children[fishI].y && bullets[i].b.y < fish.children[fishI].y + 69)
         {
-            //remove bullet
-            stage.removeChild(bullets[i].b);
-            bullets[i].b = null;
-            bullets.splice(i, 1);
+            // remove bullet
+            if(bullets[i].b.alpha == 1)
+                bullets[i].b.alpha = 0.5
+            else
+            {
+                stage.removeChild(bullets[i].b);
+                bullets[i].b = null;
+                bullets.splice(i, 1);
+            }
 
             //increase score
-            scoreRate += 100
-            score += (500 + scoreRate/2)
+            scoreRate += 100;
+            score += (500 + scoreRate/2);
 
             //remove fish
-            stage.removeChild(fish[fishIndex].f);
-            fish[fishIndex].f = null;
-            fish.splice(fishIndex, 1);
+            fish.removeChildAt(fishI);
 
+            return 1;
             break;
         }
-    }
 
-}
+    }
+    return 0;
+
+} 
 
 function onPlatform(p) 
 {
@@ -544,7 +591,7 @@ function checkTankCollision()
         tanksCollected++;
         scoreRate += 100;
 		score += (1000 + scoreRate);
-        if(oxygenRate <= 2.5) //Dropping faster is too hard
+        if(oxygenRate <= 1.5) //Dropping faster is too hard
             oxygenRate += 0.1;
 	}
 }
@@ -564,11 +611,11 @@ function movesTank()
         ];
 		
 	//I take the current location of the tank, remove it, and then randomly place the tank in another location.
-	var myx=tank.x;
-	var myy=tank.y;
-	for (var i=0; i<myArray.length; i++)
+	var myx = tank.x;
+	var myy = tank.y;
+	for (var i = 0; i < myArray.length; i++)
 	{
-		if (myArray[i].x==tank.x && myArray[i].y==tank.y)
+		if (myArray[i].x == tank.x && myArray[i].y == tank.y)
 		{
 			break;
 		}
@@ -578,13 +625,15 @@ function movesTank()
 	myArray.splice(i, 1); //This should remove the current location.
 	
 	//Going to select a random location
-	var randomIndex=Math.floor(Math.random()*(myArray.length)); 
+	var randomIndex = Math.floor(Math.random() * (myArray.length-1)); 
 	
 	//Set the tank to the random index's location
-	tank.x=myArray[randomIndex].x;
-	tank.y=myArray[randomIndex].y;
+    createjs.Tween.get(tank).to({x: myArray[randomIndex].x}, 200);
+    createjs.Tween.get(tank).to({y: myArray[randomIndex].y}, 200);
+	//tank.x=myArray[randomIndex].x;
+	//tank.y=myArray[randomIndex].y;
 	
-	stage.update();
+	//stage.update();
 	
 }
 
@@ -592,18 +641,43 @@ function createFish()
 {
     //create temporary magikarp
     var magik = new createjs.Sprite(magikarpSheet,'moveLeft');
-    magik.addEventListener("change", swimLeft);
-    magik.regX = 31.5; magik.regY = 34.5;
-    magik.x = 1320;
-    magik.y = 50 + Math.floor(Math.random() * 600);
-    stage.addChild(magik);
+    
+    var speed = Math.random() * 3;
+    if(speed < 1)
+    {
+        magik.addEventListener("change", swimLeft);
+    }
+    else if(speed < 2)
+    {
+        magik.addEventListener("change", swimLeftFast);
+        magik.scaleX = magik.scaleY = 1.5;
+    }
+    else
+    {
+        magik.addEventListener("change", swimLeftSlow);
+        magik.scaleX = magik.scaleY = 0.75;
+    }
 
-    //add magikarp to the array
-    fish.push({f:magik,m:-2});
-    magik = null;
+    //magik.addEventListener("change", swimLeft);
+    magik.x = 1320;
+    magik.y = 50 + Math.floor(Math.random() * 505);
+
+    //add temp magikarp to fish container
+    fish.addChild(magik);
+    stage.update();
 }
 
 function swimLeft(e) {
+    var s = e.target;
+    s.x -= 3;
+}
+
+function swimLeftFast(e) {
+    var s = e.target;
+    s.x -= 4;
+}
+
+function swimLeftSlow(e) {
     var s = e.target;
     s.x -= 2;
 }
@@ -614,19 +688,39 @@ function createBullet()
     var gBullet = new createjs.Graphics();
     gBullet.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 20);
 
+    var gBullet2 = new createjs.Graphics();
+    gBullet2.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 10);
+
+    var gBullet3 = new createjs.Graphics();
+    gBullet3.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 10);
+
     var bullet = new createjs.Shape(gBullet);
-    bullet.regX = bullet.regY = bullet.w/2;
-    bullet.x = diver.x; bullet.y = diver.y;
-    stage.addChild(bullet);
+    bullet.x = 60; bullet.y = 20;
+    var bullet2 = new createjs.Shape(gBullet2);
+    bullet2.x = 30; bullet2.y = 20;
+    var bullet3 = new createjs.Shape(gBullet3);
+    bullet3.x = 10; bullet3.y = 20;
+
+    var bulletContainer = new createjs.Container();
+    bulletContainer.addChild(bullet, bullet2, bullet3);
+    bulletContainer.x = diver.x;
+    bulletContainer.y = diver.y - 20;
+    stage.addChild(bulletContainer);
 
     //determine the direction/speed of the bullet
     var bulletMovement = bulletSpeed;
     if(playerDirection == "LEFT")
+    {
         bulletMovement *= -1;
+        bulletContainer.scaleX *= -1;
+    }
 
     //add the bullet to the array
-    bullets.push({b:bullet,m:bulletMovement});
+    bullets.push({b:bulletContainer,m:bulletMovement});
     bullet = null;
+    bullet2 = null;
+    bullet3 = null;
+    bulletContainer = null;
 
     //decrease stamina bar
     staminaCommand.w -= 50;
@@ -837,6 +931,9 @@ function resetGame()
     pressedDown = 0;
     isDrowning = 0;
     isGameOver = 0;
+    fishRate= 200;
+    fishCount = 0;
+    fish.removeAllChildren();
     playerDirection = "RIGHT";
     createjs.Ticker.setPaused(false);
 
