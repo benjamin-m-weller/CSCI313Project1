@@ -1,19 +1,33 @@
+Brainstorming for the second half: https://cdn.meme.am/cache/instances/folder608/60099608.jpg
+**Simply brainstorming** (it doens't matter how outlandish it seems we just need something to think about)
+
+-Refactor code in the tick method (Ben will do this)
+-Add java doc style comments above methods 
+-Create animated seaweed in the background
+-Have the background be ominiously dark and as such seem like you are underwater
+-Possibly have enemies shoot towards the player
+-All custom sprites?
+-Additional enemies/ random pathing?
+-Make fish come from all directions
+-Powerups (make oxygen deplete slower/reduce drownding/big point boost)
+	- Make oxygen deplete slower
+	- reduce drowning
+	- big point boost (X2, X5, X10)
+-Get sounds working
+-Collect parts to build a new oxygen tank
+	- Takes 5 parts (random spawns - like powerups)
+	- Sets oxygen depletion back to how slow it was at beginning
+	- Removes all water in tank from drowning
+-moving platforms
+-oxygen tanks animate while sitting (float up and down)
+-more oxygen tank locations
+-moving oxygen tanks
+
+
 Project Backlog:
 
 NEED (for game to be played):
-- Add collisions with Oxygen tank
-	- Move Oxygen tank to different location
-		- Create 6 or more locations where tank can spawn
-		- Randomize where tank spawns
-	- Refill Oxygen bar
-	- Change score (maybe increment +1)
-	- Make oxygen drop slightly faster (increase oxygenRate += .1)
-		- To make the game get harder each tank you collect 
-- Add score (number of Oxygen tanks collected)
-	- Maybe include time survived somehow
-- Make game end when Oxygen bar runs out.
-- Add documentation to top of js file
-
+- DETERMINE THIS LATER
 
 POSSIBLE:
 - Add animations for character
@@ -22,28 +36,53 @@ POSSIBLE:
 	- Holding down while standing
 	- Holding down while swimming
 - Add enemies
-	- Fish
-		- swim left/right
 	- Crab
 		- Move along floor/platforms
-	- Enemies will take oxygen when come in contact
-		- Enemies will dissapear upon contact
-- Add weapon to shoot enemies
-	- Shoot small circles
-	- Remove circles when they hit an enemy or go off screen.
-- Make canvas bigger
-	- currently 800x600. Maybe make it 1280x720.
-	- it just seems super small right now.
 - Moving platforms
 	- the character would have to move with the platform if standing on it
 	- the oxygen tanks would have to move with the platform if on top
+- Move code in tick() into different methods to make tick() cleaner.
+- Add more tank locations (why not)
 
 
-COMPLETED THIS ITERATION
+COMPLETED FOURTH ITERATION
+- 
+
+----------------------------------------------------------------------------------Project 1 below
+
+COMPLETED THIRD ITERATION
+- (Aaron) Add "Drowning" aspect to oxygen bar
+	- When it runs out, a second bar (red or dark blue) begins to fill up
+	- Game slows down (slow down ticker)
+	- Transparent red (or blue) layer appears
+	- When you get a tank, it fill up oxygen bar half of the way
+		- drowning bar begins to drop slowly
+		- once oxygen runs out again, drowning bar begins to go up again
+- (Aaron) Add Shooting
+	- press SPACEBAR to shoot
+	- bullets shoot in the direction the character was facing when fired
+	- remove bullets when they go offscreen
+	- only allow 5 bullets on screen at once
+- (Ben) Increased canvas size to 1280x720
+- (Aaron) Added stamina bar for shooting
+	- doesn't allow to shoot when stamina bar is empty
+	- requires recovery period after shooting or running out of stamina.
+
+COMPLETED SECOND ITERATION
+- (Aaron) Add Score
+	- goes up over time
 - (Aaron) Change oxygen bar to be on the canvas rather than using HTML
+- (Ben) Add collisions with Oxygen tank
+	- Add to score
+	- Move oxygen tank to different location
+- (Ben) Move Oxygen tank to different location
+- (Aaron) Make oxygen drop faster each tank collected
+- (Aaron) Make score go up more with each tank
+- (Aaron) Add game over sequence
+	- Allow ability to reset game
 
 
-COMPLETED LAST ITERATION
+COMPLETED FIRST ITERATION
 - Create canvas
 - Create ocean floor
 - Add background
