@@ -9,6 +9,7 @@ Brainstorming for the second half: https://cdn.meme.am/cache/instances/folder608
 -All custom sprites?
 -Additional enemies/ random pathing?
 -Powerups (make oxygen deplete slower/reduce drownding/big point boost)
+-Get sounds working
 
 
 
