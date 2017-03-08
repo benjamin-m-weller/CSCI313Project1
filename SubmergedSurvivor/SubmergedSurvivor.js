@@ -46,8 +46,7 @@ const PWidth=300; //width of the platforms
 //var pB; // pause button
 var pausedLabel;
 var isInstructions = 1;
-var isDrowning = 0;
-var isGameOver = 0;
+var isGameOver = 0; //This needs to get removed 
 
 //sprite sheets
 var magikarpSheet;
@@ -220,10 +219,6 @@ function init()
     stage.addChild(blackScreen);
     stage.update();
 
-	//Arrows
-	
-	//{x:630, y:325}, //middle platform
-	
     redarrowL = new createjs.Bitmap(redarrowImage);
     redarrowL.x = 567; redarrowL.y = 320;
     stage.addChild(redarrowL);
@@ -356,52 +351,12 @@ function tick(event) {
         \---------------*/
         checkTankCollision();
 
-        /*-----------\
-        | Oxygen Bar |
-        \-----------*/
-        if(oxygenCommand.w > 0)
-        {
-            oxygenCommand.w -= oxygenRate;
-            isDrowning = 0;
-
-            //Adding to the score
-            score++;
-            scoreLabel.text = "Score: " + score;
-        }
-        else
-        {
-            oxygenCommand.w = 0; //Makes it look cleaner when gameover.
-            isDrowning = 1;
-
-        }
-
-        /*---------\
-        | Drowning |
-        \---------*/
-        if(isDrowning == 1)
-        {
-            drowningCommand.w += drowningRate;
-            if(redScreen.alpha == 0)
-            {
-                createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
-                createjs.Ticker.setFPS(50);
-            }
-
-            //Check for gameOver
-            if(drowningCommand.w >= 400){
-                gameOver();
-            }               
-        }
-        else if(drowningCommand.w > 0) //lower if now drowning
-        {
-            //drowningCommand.w -= 0.05; //drowning bar slowly drains
-            if(redScreen.alpha == 0.3)
-            {
-                createjs.Tween.get(redScreen).to({alpha: 0}, 500);
-                createjs.Ticker.setFPS(60);                
-            }
-        }
-        
+         /*-----------\
+         | Oxygen Bar |
+         \-----------*/
+		 //The below method call also implicitly does the drowning logic.
+		 oxygenBarLogic();
+      
         /*--------\
         | Bullets |
         \--------*/
@@ -971,7 +926,6 @@ function resetGame()
     onGround = 0;
     pressedLeft = 0, pressedRight = 0;
     pressedDown = 0;
-    isDrowning = 0;
     isGameOver = 0;
     fishRate= 200;
     fishCount = 0;
@@ -989,4 +943,57 @@ function resetGame()
     };
 
     init();
+}
+
+//This method does the logic for the oxygenBar during the game
+function oxygenBarLogic()
+{
+	if(oxygenCommand.w > 0)
+        {
+            oxygenCommand.w -= oxygenRate;
+            drowningLogic(false); //We are not currently drowning
+
+			//Flag
+			//We should make a method that does this instead of placing these two lines of code everwhere
+            //Adding to the score
+            score++;
+            scoreLabel.text = "Score: " + score;
+        }
+        else
+        {
+			//Flag
+			//The below line of code can be put in the game over function then??
+            oxygenCommand.w = 0; //Makes it look cleaner when gameover. 
+            drowningLogic(true);
+
+        }
+}
+
+//This method does the drowning logic for the game.
+//It will only be called from within the oxygenBarLogic method.
+function drowningLogic (drowningStaus)
+{
+	if (drowningStaus==true) //Spelled out to be entirely explicit
+	{
+		drowningCommand.w += drowningRate;
+            if(redScreen.alpha == 0) //Chould be shipped of to a tween method
+            {
+                createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
+                createjs.Ticker.setFPS(50);
+            }
+
+            //Check for gameOver
+            if(drowningCommand.w >= 400){
+                gameOver();
+            }    
+	}
+	else if(drowningCommand.w > 0) //lower if now drowning
+        {
+            //drowningCommand.w -= 0.05; //drowning bar slowly drains
+            if(redScreen.alpha == 0.3) //Chould be shipped of to a tween method
+            {
+                createjs.Tween.get(redScreen).to({alpha: 0}, 500);
+                createjs.Ticker.setFPS(60);                
+            }
+        }
 }
