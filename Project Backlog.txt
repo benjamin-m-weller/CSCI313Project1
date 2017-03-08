@@ -1,3 +1,17 @@
+Brainstorming for the second half: https://cdn.meme.am/cache/instances/folder608/60099608.jpg
+**Simply brainstorming** (it doens't matter how outlandish it seems we just need something to think about)
+
+-Refactor code in the tick method (Ben will do this)
+-Add java doc style comments above methods 
+-Create animated seaweed in the background
+-Have the background be ominiously dark and as such seem like you are underwater
+-Possibly have enemies shoot towards the player
+-All custom sprites?
+-Additional enemies/ random pathing?
+-Powerups (make oxygen deplete slower/reduce drownding/big point boost)
+
+
+
 Project Backlog:
 
 NEED (for game to be played):
