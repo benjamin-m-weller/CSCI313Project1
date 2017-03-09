@@ -43,10 +43,8 @@ var bubbleSound;
 
 const PWidth=300; //width of the platforms
 
-//var pB; // pause button
 var pausedLabel;
 var isInstructions = 1;
-var isGameOver = 0; //This needs to get removed 
 
 //sprite sheets
 var magikarpSheet;
@@ -75,8 +73,6 @@ function load()
     document.onkeyup = handleKeyUp.bind(this);
     document.onkeydown = handleKeyDown.bind(this);
     document.getElementById("canvas").onkeydown = handleKeyDown;
-
-    pB = document.getElementById("pauseBtn");
 }
 
 function init()
@@ -749,9 +745,8 @@ function handleKeyDown(e)
             if(staminaCommand.w > 0) //Doesn't allow player to shoot while out of stamina
                 createBullet();
             break;
-
         case KEYCODE_ENTER:
-            if(isGameOver == 0)
+            if(isGameOver() == false) //Spelled out explicitily for readability
                 pause();
             else
                 resetGame();
@@ -863,14 +858,12 @@ function pause()
     if (createjs.Ticker.getPaused())
     {
         createjs.Ticker.setPaused(false);
-        //pB.textContent="Pause Game";
-        pausedLabel.visible = false;
+                pausedLabel.visible = false;
         stage.update();
     }
     else {
         createjs.Ticker.setPaused(true);
-        //pB.textContent="Paused";
-        if(isInstructions == 0)
+		if(isInstructions == 0)
         {
             pausedLabel.visible = true;
             stage.update();
@@ -909,8 +902,6 @@ function gameOver()
 
     createjs.Ticker.setPaused(true);
     redScreen.alpha = 1;
-    isGameOver = true;
-
 }
 
 function resetGame()
@@ -926,7 +917,6 @@ function resetGame()
     onGround = 0;
     pressedLeft = 0, pressedRight = 0;
     pressedDown = 0;
-    isGameOver = 0;
     fishRate= 200;
     fishCount = 0;
     currentWall = 50000;
@@ -946,6 +936,7 @@ function resetGame()
 }
 
 //This method does the logic for the oxygenBar during the game
+//This method also implicitly does the drowning logic for the game.
 function oxygenBarLogic()
 {
 	if(oxygenCommand.w > 0)
@@ -960,12 +951,8 @@ function oxygenBarLogic()
             scoreLabel.text = "Score: " + score;
         }
         else
-        {
-			//Flag
-			//The below line of code can be put in the game over function then??
-            oxygenCommand.w = 0; //Makes it look cleaner when gameover. 
+        { 
             drowningLogic(true);
-
         }
 }
 
@@ -976,24 +963,40 @@ function drowningLogic (drowningStaus)
 	if (drowningStaus==true) //Spelled out to be entirely explicit
 	{
 		drowningCommand.w += drowningRate;
-            if(redScreen.alpha == 0) //Chould be shipped of to a tween method
-            {
-                createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
-                createjs.Ticker.setFPS(50);
-            }
-
-            //Check for gameOver
-            if(drowningCommand.w >= 400){
-                gameOver();
-            }    
+		//Change the amount of red the screen shows (increase it)
+		if(redScreen.alpha == 0) 
+		{
+			createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
+			createjs.Ticker.setFPS(50);
+		}
+		if (isGameOver()==true) //Spelled out explicitly for readability
+		{
+			gameOver();
+		}
 	}
-	else if(drowningCommand.w > 0) //lower if now drowning
+	//If we were previously drowning but now currrently aren't
+	else if(drowningCommand.w > 0 && drowningStaus==false) 
         {
             //drowningCommand.w -= 0.05; //drowning bar slowly drains
-            if(redScreen.alpha == 0.3) //Chould be shipped of to a tween method
-            {
-                createjs.Tween.get(redScreen).to({alpha: 0}, 500);
-                createjs.Ticker.setFPS(60);                
-            }
+			//Change the amound of red the screen shows(decrease it)
+			if(redScreen.alpha == 0.3) 
+			{
+				createjs.Tween.get(redScreen).to({alpha: 0}, 500);
+				createjs.Ticker.setFPS(60); 
+			}
         }
+}
+
+//This method was an attempt to simplify the logic that revolved around checking
+//if the game was done or not.
+function isGameOver()
+{
+	if(drowningCommand.w >= 400)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
