@@ -7,7 +7,7 @@ DOCUMENTATION
 var queue; // LoadQueue
 var stage; // Stage
 
-//KEYS
+//Keycodes for later use when getting input
 var KEYCODE_ENTER = 13;
 var KEYCODE_SPACE = 32;
 var KEYCODE_UP = 38;
@@ -19,8 +19,8 @@ var KEYCODE_A = 65;
 var KEYCODE_D = 68;
 var KEYCODE_S = 83;
 
-var xKeyHeld = "NONE";
-var yKeyHeld = "NONE";
+var xKeyHeld = "NONE"; //Determines if any of the keys that moves the Diver's X are held.
+var yKeyHeld = "NONE"; //Determines if any of the keys that moves the Diver's Y are held.
 var playerDirection = "RIGHT";
 
 var yMomentum = 0;
@@ -62,12 +62,14 @@ magikarpData = {
 function load()
 {
     queue = new createjs.LoadQueue(false);
-    queue.addEventListener( "complete", init );
+    queue.installPlugin(createjs.Sound);
+	queue.addEventListener( "complete", init );
     queue.loadManifest([{id:"bigdaddy",src:"bigdaddy.png"},{id:"tank",src:"tank.png"},
         {id:"oceanbackground",src:"oceanbackground.png"},{id:"redarrow",src:"redarrow.png"},
         {id:"magikarpImage",src:"magikarpsubsheet.png"},
-		{id: "bubbleSound", src:"bubble.mp3"}]);
-	queue.installPlugin(createjs.Sound);	
+		{id: "bubbleSound", src:"bubbles.mp3"},
+		{id: "shotSound", src: "shot.mp3"}]);
+		
 	
 
     document.onkeyup = handleKeyUp.bind(this);
@@ -78,11 +80,6 @@ function load()
 function init()
 {
     stage = new createjs.Stage("canvas");
-	
-	//Sound code doesn't work
-	// bubbleSound=queue.getResult("bubbleSound");
-	// createjs.Sound.registerSound("bubble.mp3", "bubbleSound", 0);
-	// createjs.Sound.play("bubbleSound");
 	
     var diverImage = queue.getResult("bigdaddy");
     var tankImage = queue.getResult("tank");
@@ -486,6 +483,12 @@ function tick(event) {
     }
 }
 
+/*
+This function checks to see if the diver is colliding with a fish. If the diver is colliding with a fish
+then the oxygen is dropped, and fish is removed.
+fishI: This is the index of the fish sprite as it is contained in the mother "fish" container.
+return: The function returns true if the fish is colliding with the diver. False otherwise.
+*/
 function checkFishCollision(fishI)
 {
  	
@@ -504,11 +507,16 @@ function checkFishCollision(fishI)
  		//Removes fish
  		fish.removeChildAt(fishI);
 
-        return 1;
+        return 1; //Flag 
      }
  	
 }
-
+/*
+This function checks to see if a bullet is colliding with a fish. If a bullet is colliding with a fish
+then the bullet/fish are removed, in addition to adding to the score and incrementing the score rate.
+fishI: This is the index of the fish sprite as it is contained in the mother "fish" container.
+return: The function returns true if a bullet is colliding with a fish. False otherwise.
+*/
 function checkBulletCollision(fishI)
 {
 
@@ -535,15 +543,20 @@ function checkBulletCollision(fishI)
             //remove fish
             fish.removeChildAt(fishI);
 
-            return 1;
+            return 1; //Flag
             break;
         }
 
     }
-    return 0;
+    return 0; //Flag
 
 } 
-
+/*
+This function indicates if the diver is standing on a platform, and it stops him falling through 
+the top of the platform, but it allows him to go through the bottom of it.
+p: Is is reference to a platform.
+return: True if the diver is on the playform, false otherwise.
+*/
 function onPlatform(p) 
 {
     //On top of platform
@@ -552,20 +565,23 @@ function onPlatform(p)
         diver.x >= p.x - diverChangeX && diver.x <= p.x + PWidth + diverChangeX)
         {
             diver.y = p.y - diverChangeY;
-            return 1;
+            return 1; //Flag
         }
     else
-        return 0;
+        return 0; //Flag
 }
 
+/*
+This function checks to see if the tank and diver are colliding.
+If they are, it calls the moveTank() method, and plays a sound.
+It also does some score logic with regards to difficulty.
+*/
 function checkTankCollision()
 {
-	//Going to get the local point for the middle of the oxygen tank
-	var point = tank.localToLocal(10, 10, diver);
-	
-	//Now comparing the local point to see if the diver has hit the middle of the tank.
-	if (diver.hitTest(point.x, point.y))
+	if (genericCollisionMethod(tank, diver, 10, 10))
 	{
+		//Plays the bubble sound
+		createjs.Sound.play("bubbleSound");
         //Move tank to a different location
 		movesTank();
 
@@ -576,11 +592,30 @@ function checkTankCollision()
         tanksCollected++;
         scoreRate += 100;
 		score += (1000 + scoreRate);
-        if(oxygenRate <= 1.5) //Dropping faster is too hard
+        if(oxygenRate <= 1.5) //Dropping faster is too hard //Flag
             oxygenRate += 0.1;
 	}
 }
 
+/*
+This method is a generic collision method that will determine if two bitmaps are colliding.
+imageWithCenterCollision: This is the image that will have to collide with the center.
+imageWithCollisionAnywhere: This is the image that if anywhere touches the center of the fist arugment it will "collide".
+centerOfImageOneX: This is used to determine the center of the first bitmap (X cordinate).
+centerOfImageOneY: This is used to determine the center of the first bitmap (Y cordinate).
+return: This method returns true if imageWithCollisionAnywhere is currently colliding with the center of imageWithCenterCollision. False otherwise.
+*/
+function genericCollisionMethod(imageWithCenterCollision, imageWithCollisionAnywhere, centerOfImageOneX, centerOfImageOneY)
+{
+	var point = imageWithCenterCollision.localToLocal(centerOfImageOneX, centerOfImageOneY, imageWithCollisionAnywhere);
+	
+	return (imageWithCollisionAnywhere.hitTest(point.x, point.y));
+}
+
+/*
+This function moves the current location of the tank and moves it to a new one.
+It also tweens them during the movement.
+*/
 function movesTank()
 {
 	//I have a list of locations that the tank could be in
@@ -612,16 +647,17 @@ function movesTank()
 	//Going to select a random location
 	var randomIndex = Math.floor(Math.random() * (myArray.length-1)); 
 	
-	//Set the tank to the random index's location
+	//Set the tank to the random index's location, and tween it there
     createjs.Tween.get(tank).to({x: myArray[randomIndex].x}, 200);
     createjs.Tween.get(tank).to({y: myArray[randomIndex].y}, 200);
-	//tank.x=myArray[randomIndex].x;
-	//tank.y=myArray[randomIndex].y;
-	
-	//stage.update();
-	
 }
 
+/*
+This function is the go to function for creating fish. 
+fishSpeed: Has two values, "WALL" and "NORMAL", 
+if the fish are to form a wall they must be a bit slower, 
+otherwise the fish will be moving at a normal speed.
+*/
 function createFish(fishSpeed)
 {
     //create temporary magikarp
@@ -635,7 +671,7 @@ function createFish(fishSpeed)
     else // "NORMAL"
     {
         var speed = Math.random() * 3;
-        if(speed < 1)
+        if(speed < 1) //Flag //Doesn't make sense?
         {
             magik.addEventListener("change", swimLeft);
         }
@@ -660,23 +696,40 @@ function createFish(fishSpeed)
     stage.update();
 }
 
+/*
+This function is used to update the magicarp that are swimming left at the normal speed (<1)
+e: The change event.
+*/
 function swimLeft(e) {
     var s = e.target;
     s.x -= 3;
 }
-
+/*
+This function is used to update the magicarp that are swimming left at the fast speed (<2)
+e: The change event.
+*/
 function swimLeftFast(e) {
     var s = e.target;
     s.x -= 4;
 }
 
+/*
+This function is used to update the magicarp that are swimming left at the slow speed ??????? //Flag
+e: The change event.
+*/
 function swimLeftSlow(e) {
     var s = e.target;
     s.x -= 2;
 }
 
+/*
+This function creates the bullets. Each bullet is three circles, and are randomly assigned a color.
+*/
 function createBullet()
 {
+	//Creates shooting sound
+	createjs.Sound.play("shotSound");
+	
     //create temporary bullet
     var gBullet = new createjs.Graphics();
     gBullet.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 20);
@@ -721,6 +774,9 @@ function createBullet()
         isFiring = 1;
 }
 
+/*
+This function returns a random color to be used for the making of the bullets.
+*/
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
     var color = '#';
@@ -730,6 +786,10 @@ function getRandomColor() {
     return color;
 }
 
+/*
+This function handles all keydown events.
+e: Keydown event.
+*/
 function handleKeyDown(e)
 {
     //cross browser issues
@@ -787,6 +847,10 @@ function handleKeyDown(e)
     }
 }
 
+/*
+This function handles all keyup events.
+e: Keyup event.
+*/
 function handleKeyUp(e)
 {
     //cross browser issues
@@ -852,7 +916,9 @@ function handleKeyUp(e)
 
 }
 
-//Pauses the ticker
+/*
+This function pauses the ticker.
+*/
 function pause()
 {
     if (createjs.Ticker.getPaused())
@@ -871,6 +937,9 @@ function pause()
     }
 }
 
+/*
+This function executes the game over sequence.
+*/
 function gameOver()
 {
     //Reposition scoreLabel
@@ -904,6 +973,9 @@ function gameOver()
     redScreen.alpha = 1;
 }
 
+/*
+This function resets the game after the enter key is pressed folloing a game over.
+*/
 function resetGame()
 {
     //reset variables
@@ -926,7 +998,7 @@ function resetGame()
     playerDirection = "RIGHT";
     createjs.Ticker.setPaused(false);
 
-    //removes all children from stage. Saves memory (i think)
+    //removes all children from stage. Saves memory (I think)
     for (var i = stage.children.length - 1; i >= 0; i--)
     {
         stage.removeChild(stage.children[i]);
@@ -935,8 +1007,10 @@ function resetGame()
     init();
 }
 
-//This method does the logic for the oxygenBar during the game
-//This method also implicitly does the drowning logic for the game.
+/*
+This method does the logic for the oxygenBar during the game
+This method also implicitly does the drowning logic for the game.
+*/
 function oxygenBarLogic()
 {
 	if(oxygenCommand.w > 0)
@@ -956,11 +1030,14 @@ function oxygenBarLogic()
         }
 }
 
-//This method does the drowning logic for the game.
-//It will only be called from within the oxygenBarLogic method.
-function drowningLogic (drowningStaus)
+/*
+This method does the drowning logic for the game.
+It will only be called from within the oxygenBarLogic method.
+drowningStatus: Is true if the player currently is drowning, false otherwise.
+*/
+function drowningLogic (drowningStatus)
 {
-	if (drowningStaus==true) //Spelled out to be entirely explicit
+	if (drowningStatus==true) //Spelled out to be entirely explicit
 	{
 		drowningCommand.w += drowningRate;
 		//Change the amount of red the screen shows (increase it)
@@ -975,7 +1052,7 @@ function drowningLogic (drowningStaus)
 		}
 	}
 	//If we were previously drowning but now currrently aren't
-	else if(drowningCommand.w > 0 && drowningStaus==false) 
+	else if(drowningCommand.w > 0 && drowningStatus==false) 
         {
             //drowningCommand.w -= 0.05; //drowning bar slowly drains
 			//Change the amound of red the screen shows(decrease it)
@@ -987,8 +1064,9 @@ function drowningLogic (drowningStaus)
         }
 }
 
-//This method was an attempt to simplify the logic that revolved around checking
-//if the game was done or not.
+/*
+This method was an attempt to simplify the logic that revolved around checking if the game was done or not.
+*/
 function isGameOver()
 {
 	if(drowningCommand.w >= 400)
