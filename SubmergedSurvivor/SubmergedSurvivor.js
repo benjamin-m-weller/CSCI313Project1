@@ -268,9 +268,12 @@ function init()
 /*----------\
 | Game Loop |
 \----------*/
-function tick(event) {
+function tick(event) 
+{
     if (!event.paused)
     {
+		//Include an updated score label
+		scoreLabel.text = "Score: " + score;
 
         /*------------------------\
         | Left and Right Controls |
@@ -307,8 +310,8 @@ function tick(event) {
         if (diver.y < 670 - diverChangeY) //Prevents character from falling through the floor
         {
             //Check if on platforms
-            if (onPlatform(platform1) == 1 || onPlatform(platform2) || onPlatform(platform3) ||
-                    onPlatform(platform4) || onPlatform(platform5)) 
+            if (onPlatform(platform1) == true || onPlatform(platform2) || onPlatform(platform3) ||
+                    onPlatform(platform4) || onPlatform(platform5)) //Spelled out explicitly for readability.
             {
                 yMomentum = 0;
             }
@@ -389,11 +392,11 @@ function tick(event) {
                 }
 
                 //fish collision with bulletes
-                if(checkBulletCollision(i) == 1)
+                if(checkBulletCollision(i) == true) //Spelled out explicitly for readability. 
                     break;
 
                 //fish collision with diver
-                if(checkFishCollision(i) == 1)
+                if(checkFishCollision(i) == true) //Spelled out explicitly for readability. 
                     break;
             }
         }
@@ -502,12 +505,12 @@ function checkFishCollision(fishI)
             oxygenCommand.w = 0;
  		
  		//Decrease score
- 		score-=100;
+ 		addToScore(-100);
  		
  		//Removes fish
  		fish.removeChildAt(fishI);
 
-        return 1; //Flag 
+        return true; 
      }
  	
 }
@@ -538,17 +541,17 @@ function checkBulletCollision(fishI)
 
             //increase score
             scoreRate += 100;
-            score += (500 + scoreRate/2);
+            addToScore(500 + scoreRate/2);
 
             //remove fish
             fish.removeChildAt(fishI);
 
-            return 1; //Flag
+            return true; 
             break;
         }
 
     }
-    return 0; //Flag
+    return false; 
 
 } 
 /*
@@ -565,10 +568,10 @@ function onPlatform(p)
         diver.x >= p.x - diverChangeX && diver.x <= p.x + PWidth + diverChangeX)
         {
             diver.y = p.y - diverChangeY;
-            return 1; //Flag
+            return true; 
         }
     else
-        return 0; //Flag
+        return false; 
 }
 
 /*
@@ -591,8 +594,8 @@ function checkTankCollision()
         //Adjust score/difficulty
         tanksCollected++;
         scoreRate += 100;
-		score += (1000 + scoreRate);
-        if(oxygenRate <= 1.5) //Dropping faster is too hard //Flag
+		addToScore(1000 + scoreRate);
+        if(oxygenRate <= 1.5) //Dropping faster is too hard 
             oxygenRate += 0.1;
 	}
 }
@@ -806,7 +809,7 @@ function handleKeyDown(e)
                 createBullet();
             break;
         case KEYCODE_ENTER:
-            if(isGameOver() == false) //Spelled out explicitily for readability
+            if(isGameOver() == false) //Spelled out explicitly for readability
                 pause();
             else
                 resetGame();
@@ -1017,13 +1020,8 @@ function oxygenBarLogic()
         {
             oxygenCommand.w -= oxygenRate;
             drowningLogic(false); //We are not currently drowning
-
-			//Flag
-			//We should make a method that does this instead of placing these two lines of code everwhere
-            //Adding to the score
-            score++;
-            scoreLabel.text = "Score: " + score;
-        }
+            addToScore(1);
+		}
         else
         { 
             drowningLogic(true);
@@ -1077,4 +1075,12 @@ function isGameOver()
 	{
 		return false;
 	}
+}
+/*
+This method is indented to simplify and make the code look a bit better. (It adds the passed parameter to the score variable)
+addition: The number to be added to the score variable.
+*/
+function addToScore(addition)
+{
+	score+=addition;
 }
