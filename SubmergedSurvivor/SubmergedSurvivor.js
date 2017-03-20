@@ -505,7 +505,7 @@ function checkFishCollision(fishI)
             oxygenCommand.w = 0;
  		
  		//Decrease score
- 		addToScore(-100);
+ 		score-=100;
  		
  		//Removes fish
  		fish.removeChildAt(fishI);
@@ -541,7 +541,7 @@ function checkBulletCollision(fishI)
 
             //increase score
             scoreRate += 100;
-            addToScore(500 + scoreRate/2);
+            score+=(500 + scoreRate/2);
 
             //remove fish
             fish.removeChildAt(fishI);
@@ -594,7 +594,7 @@ function checkTankCollision()
         //Adjust score/difficulty
         tanksCollected++;
         scoreRate += 100;
-		addToScore(1000 + scoreRate);
+		score+=(1000 + scoreRate);
         if(oxygenRate <= 1.5) //Dropping faster is too hard 
             oxygenRate += 0.1;
 	}
@@ -1020,7 +1020,7 @@ function oxygenBarLogic()
         {
             oxygenCommand.w -= oxygenRate;
             drowningLogic(false); //We are not currently drowning
-            addToScore(1);
+            score++;
 		}
         else
         { 
@@ -1075,12 +1075,4 @@ function isGameOver()
 	{
 		return false;
 	}
-}
-/*
-This method is indented to simplify and make the code look a bit better. (It adds the passed parameter to the score variable)
-addition: The number to be added to the score variable.
-*/
-function addToScore(addition)
-{
-	score+=addition;
 }
