@@ -1082,19 +1082,39 @@ function isGameOver()
 
 function powerUpLogic()
 {
+	var itemsToRemove=[];
 	if (powerUpArray.length>0)
 	{
 		//Loop through and move all powerups down (gravity)
-		for (var myVariable = 0; myVariable < powerUpArray.length - 1; myVariable++)
+		for (var myVariable = 0; myVariable < powerUpArray.length; myVariable++)
 		{
-			powerUpArray[myVariable].y += 50;
+			powerUpArray[myVariable].y += 3;
 			
 			//If they are below the sea floor remove them
-			if (powerUpArray[myVariable].y > 720)
+			if (powerUpArray[myVariable].y > 670)
 			{
-				powerUpArray.splice(myVariable, 1);
+				itemsToRemove.push(myVariable);
+				//These three things didn't work, so I had to do do something more complicated
+				//stage.removeChild(powerUpArray[myVariable]);
+				//powerUpArray.pop();
+				//powerUpArray.splice(myVariable, 1);
 			}
 		}
+	}
+	
+	//Remove all of the shapes that need to be removed.
+	if (itemsToRemove.length>0)
+	{
+		//This will remove all of the items from the array.
+		// var removeMe=powerUpArray.splice(0, itemsToRemove.length);
+		// stage.removeChild(removeMe);
+		for (var i=0; i<itemsToRemove.length; i++)
+		{
+			var variable=itemsToRemove.pop();
+			stage.removeChild(powerUpArray[variable]);
+		}
+		//Need to remove them from the array because the creation condition checks that.
+		powerUpArray.splice(0, itemsToRemove.length);
 	}
 	
 	//Every 10k points I want to add a powerup.
@@ -1111,7 +1131,7 @@ function createPowerUp()
 	//Randomly picking a powerup to display.
 	
 	//I get a random number between 0-3
-	var pickMe = Math.round(Math.random() * (4 - 0) + 0);
+	var pickMe = (Math.random() * (4 - 0));
 	
 	/*
 	0 = stop drowning
@@ -1123,26 +1143,33 @@ function createPowerUp()
 	//Going to dynamically inject a property and then have it accessed when the collision happens
 	var shape = new createjs.Shape();
 	
-	switch(pickMe)
+	if (pickMe<1)
 	{
-		case 1:
-			shape.graphics.beginStroke("blue").beginFill("blue").drawRect(0, 0, 10, 10);
-			shape.type = "Blue";
-			break;
-		case 2:
-			shape.graphics.beginStroke("red").beginFill("red").drawRect(0, 0, 10, 10);
-			shape.type = "Red";
-			break;
-		case 3:
+		shape.graphics.beginStroke("blue").beginFill("blue").drawRect(0, 0, 10, 10);
+		shape.type = "Blue";		
+	}
+			
+	else if(pickMe>1 && pickMe<2)
+	{
+		shape.graphics.beginStroke("red").beginFill("red").drawRect(0, 0, 10, 10);
+		shape.type = "Red";
+	}
+	else if(pickMe>2 && pickMe<3)
+	{
 			shape.graphics.beginStroke("green").beginFill("green").drawRect(0, 0, 10, 10);
 			shape.type = "Green";
-			break;
+	}
+	else //It's between 3 and 4
+	{
+		//Trial
 	}
 	powerUpArray.push(shape);
 	stage.addChild(shape);
 	
+	
 	//Setting a random X value betwseen 0 and 1270
 	shape.x = Math.round(Math.random() * 1270);
+
 }
 
 
