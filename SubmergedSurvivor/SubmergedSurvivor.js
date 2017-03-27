@@ -40,9 +40,9 @@ var bullets = [], bulletSpeed = 10;
 var fish = new createjs.Container(), fishRate = 200, fishCount = 0;
 var currentWall = 50000, wallDuration = 60, wallCount = 0;
 var bubbleSound;
-var powerUpArray=[], previousScore=0;
+var powerUpArray = [], previousScore = 0;
 
-const PWidth=300; //width of the platforms
+const PWidth = 300; //width of the platforms
 
 var pausedLabel;
 var isInstructions = 1;
@@ -65,11 +65,10 @@ function load()
     queue = new createjs.LoadQueue(false);
     queue.installPlugin(createjs.Sound);
 	queue.addEventListener( "complete", init );
-    queue.loadManifest([{id:"bigdaddy",src:"bigdaddy.png"},{id:"tank",src:"tank.png"},
-        {id:"oceanbackground",src:"oceanbackground.png"},{id:"redarrow",src:"redarrow.png"},
-        {id:"magikarpImage",src:"magikarpsubsheet.png"},
-		{id: "bubbleSound", src:"bubbles.mp3"},
-		{id: "shotSound", src: "shot.mp3"}]);
+    queue.loadManifest([{id: "bigdaddy", src: "bigdaddy.png"}, {id: "tank", src: "tank.png"},
+        {id: "oceanbackground", src: "oceanbackground.png"}, {id: "redarrow", src: "redarrow.png"},
+        {id: "magikarpImage", src: "magikarpsubsheet.png"},
+		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}]);
 		
 	
 
@@ -545,7 +544,7 @@ function checkBulletCollision(fishI)
 
             //increase score
             scoreRate += 100;
-            score+=(500 + scoreRate/2);
+            score += (500 + scoreRate/2);
 
             //remove fish
             fish.removeChildAt(fishI);
@@ -598,7 +597,7 @@ function checkTankCollision()
         //Adjust score/difficulty
         tanksCollected++;
         scoreRate += 100;
-		score+=(1000 + scoreRate);
+		score += (1000 + scoreRate);
         if(oxygenRate <= 1.5) //Dropping faster is too hard 
             oxygenRate += 0.1;
 	}
@@ -626,7 +625,7 @@ It also tweens them during the movement.
 function movesTank()
 {
 	//I have a list of locations that the tank could be in
-	var myArray=[
+	var myArray = [
         {x:630, y:325}, //middle platform
         {x:630, y:650}, //middle floor
         {x:10, y:102}, //top left platform
@@ -1039,7 +1038,7 @@ drowningStatus: Is true if the player currently is drowning, false otherwise.
 */
 function drowningLogic (drowningStatus)
 {
-	if (drowningStatus==true) //Spelled out to be entirely explicit
+	if (drowningStatus == true) //Spelled out to be entirely explicit
 	{
 		drowningCommand.w += drowningRate;
 		//Change the amount of red the screen shows (increase it)
@@ -1086,12 +1085,12 @@ function powerUpLogic()
 	if (powerUpArray.length>0)
 	{
 		//Loop through and move all powerups down (gravity)
-		for (var myVariable=0; myVariable<powerUpArray.length-1; myVariable++)
-		{:
-			powerUpArray[myVariable].y+=50;
+		for (var myVariable = 0; myVariable < powerUpArray.length - 1; myVariable++)
+		{
+			powerUpArray[myVariable].y += 50;
 			
 			//If they are below the sea floor remove them
-			if (powerUpArray[myVariable].y)
+			if (powerUpArray[myVariable].y > 720)
 			{
 				powerUpArray.splice(myVariable, 1);
 			}
@@ -1099,9 +1098,9 @@ function powerUpLogic()
 	}
 	
 	//Every 10k points I want to add a powerup.
-	if (score-previousScore>10000 && powerUpArray.length<=3)
+	if (score - previousScore > 10000 && powerUpArray.length <= 3)
 	{
-		previousScore=score;
+		previousScore = score;
 		//Now going to generate a "power up"
 		createPowerUp();
 	}
@@ -1112,38 +1111,38 @@ function createPowerUp()
 	//Randomly picking a powerup to display.
 	
 	//I get a random number between 0-3
-	var pickMe=Math.round(Math.random()*(4-0)+0);
+	var pickMe = Math.round(Math.random() * (4 - 0) + 0);
 	
 	/*
-	0=stop drowning
-	1=stop oxygen usage
-	2=clear enemies
-	3=stop stamina reduction
+	0 = stop drowning
+	1 = stop oxygen usage
+	2 = clear enemies
+	3 = stop stamina reduction
 	*/
 	
 	//Going to dynamically inject a property and then have it accessed when the collision happens
-	var shape=new createjs.Shape();
+	var shape = new createjs.Shape();
 	
 	switch(pickMe)
 	{
 		case 1:
 			shape.graphics.beginStroke("blue").beginFill("blue").drawRect(0, 0, 10, 10);
-			shape.type="Blue";
+			shape.type = "Blue";
 			break;
 		case 2:
 			shape.graphics.beginStroke("red").beginFill("red").drawRect(0, 0, 10, 10);
-			shape.type="Red";
+			shape.type = "Red";
 			break;
 		case 3:
 			shape.graphics.beginStroke("green").beginFill("green").drawRect(0, 0, 10, 10);
-			shape.type="Green";
+			shape.type = "Green";
 			break;
 	}
 	powerUpArray.push(shape);
 	stage.addChild(shape);
 	
 	//Setting a random X value betwseen 0 and 1270
-	shape.x=Math.round(Math.random()*(1270));
+	shape.x = Math.round(Math.random() * 1270);
 }
 
 
