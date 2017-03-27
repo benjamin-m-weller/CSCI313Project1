@@ -277,7 +277,7 @@ function tick(event)
 		scoreLabel.text = "Score: " + score;
 		
 		//Power up logic
-		powerUpLogic();
+		//powerUpLogic();
 
         /*------------------------\
         | Left and Right Controls |
@@ -1087,8 +1087,7 @@ function powerUpLogic()
 	{
 		//Loop through and move all powerups down (gravity)
 		for (var myVariable=0; myVariable<powerUpArray.length-1; myVariable++)
-		{
-			//Move them down
+		{:
 			powerUpArray[myVariable].y+=50;
 			
 			//If they are below the sea floor remove them
