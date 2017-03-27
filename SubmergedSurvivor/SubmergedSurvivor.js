@@ -40,6 +40,7 @@ var bullets = [], bulletSpeed = 10;
 var fish = new createjs.Container(), fishRate = 200, fishCount = 0;
 var currentWall = 50000, wallDuration = 60, wallCount = 0;
 var bubbleSound;
+var powerUpArray=[], previousScore=0;
 
 const PWidth=300; //width of the platforms
 
@@ -274,6 +275,9 @@ function tick(event)
     {
 		//Include an updated score label
 		scoreLabel.text = "Score: " + score;
+		
+		//Power up logic
+		powerUpLogic();
 
         /*------------------------\
         | Left and Right Controls |
@@ -1076,3 +1080,95 @@ function isGameOver()
 		return false;
 	}
 }
+
+function powerUpLogic()
+{
+	if (powerUpArray.length>0)
+	{
+		//Loop through and move all powerups down (gravity)
+		for (var myVariable=0; myVariable<powerUpArray.length-1; myVariable++)
+		{
+			//Move them down
+			powerUpArray[myVariable].y+=50;
+			
+			//If they are below the sea floor remove them
+			if (powerUpArray[myVariable].y)
+			{
+				powerUpArray.splice(myVariable, 1);
+			}
+		}
+	}
+	
+	//Every 10k points I want to add a powerup.
+	if (score-previousScore>10000 && powerUpArray.length<=3)
+	{
+		previousScore=score;
+		//Now going to generate a "power up"
+		createPowerUp();
+	}
+}
+
+function createPowerUp()
+{
+	//Randomly picking a powerup to display.
+	
+	//I get a random number between 0-3
+	var pickMe=Math.round(Math.random()*(4-0)+0);
+	
+	/*
+	0=stop drowning
+	1=stop oxygen usage
+	2=clear enemies
+	3=stop stamina reduction
+	*/
+	
+	//Going to dynamically inject a property and then have it accessed when the collision happens
+	var shape=new createjs.Shape();
+	
+	switch(pickMe)
+	{
+		case 1:
+			shape.graphics.beginStroke("blue").beginFill("blue").drawRect(0, 0, 10, 10);
+			shape.type="Blue";
+			break;
+		case 2:
+			shape.graphics.beginStroke("red").beginFill("red").drawRect(0, 0, 10, 10);
+			shape.type="Red";
+			break;
+		case 3:
+			shape.graphics.beginStroke("green").beginFill("green").drawRect(0, 0, 10, 10);
+			shape.type="Green";
+			break;
+	}
+	powerUpArray.push(shape);
+	stage.addChild(shape);
+	
+	//Setting a random X value betwseen 0 and 1270
+	shape.x=Math.round(Math.random()*(1270));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
