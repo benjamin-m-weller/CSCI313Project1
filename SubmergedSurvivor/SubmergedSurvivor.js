@@ -234,7 +234,9 @@ function init()
     diverChangeY = diver.image.height/2;
     diver.x = 640; diver.y = 570;
     diver.regX = 20; diver.regY = 23; //set regX & refY to center (40x46)    
-    stage.addChild(diver);
+    stage.addChild(diver);	
+	//Flag for diver powerup array
+	//diver.powerup=[];
     stage.update();
 
     //initialize fish Container
@@ -276,7 +278,8 @@ function tick(event)
 		scoreLabel.text = "Score: " + score;
 		
 		//Power up logic
-		//powerUpLogic();
+		//This method does the powerup logic for creation and collisions with the diver and the sea floor.
+		powerUpLogic();
 
         /*------------------------\
         | Left and Right Controls |
@@ -1082,6 +1085,9 @@ function isGameOver()
 
 function powerUpLogic()
 {
+	//Remove all powerups that have collided with the diver.
+	powerUpCollisions();
+	
 	var itemsToRemove=[];
 	if (powerUpArray.length>0)
 	{
@@ -1094,36 +1100,57 @@ function powerUpLogic()
 			if (powerUpArray[myVariable].y > 670)
 			{
 				itemsToRemove.push(myVariable);
-				//These three things didn't work, so I had to do do something more complicated
-				//stage.removeChild(powerUpArray[myVariable]);
-				//powerUpArray.pop();
-				//powerUpArray.splice(myVariable, 1);
 			}
 		}
 	}
 	
+	
 	//Remove all of the shapes that need to be removed.
-	if (itemsToRemove.length>0)
-	{
-		//This will remove all of the items from the array.
-		// var removeMe=powerUpArray.splice(0, itemsToRemove.length);
-		// stage.removeChild(removeMe);
-		for (var i=0; i<itemsToRemove.length; i++)
-		{
-			var variable=itemsToRemove.pop();
-			stage.removeChild(powerUpArray[variable]);
-		}
-		//Need to remove them from the array because the creation condition checks that.
-		powerUpArray.splice(0, itemsToRemove.length);
-	}
+	removeFromPowerupArray(itemsToRemove);
 	
 	//Every 10k points I want to add a powerup.
-	if (score - previousScore > 10000 && powerUpArray.length <= 3)
+	if (score - previousScore > 1000 && powerUpArray.length <= 3)
 	{
 		previousScore = score;
 		//Now going to generate a "power up"
 		createPowerUp();
 	}
+}
+
+function removeFromPowerupArray(arrayOfIndexesToRemove)
+{
+	if (arrayOfIndexesToRemove.length>0) 
+	{
+		//This will remove all of the items from the passed array.
+		for (var i=0; i<arrayOfIndexesToRemove.length; i++)
+		{
+			var variable=arrayOfIndexesToRemove.pop();
+			stage.removeChild(powerUpArray[variable]);
+			powerUpArray.splice(variable, 1); //Just removing the one value on this iteration
+		}
+	}
+}
+
+function powerUpCollisions()
+{
+	var itemsToRemove=[];
+	
+	for (var i=0; i< powerUpArray.length; i++)
+	{
+		if (genericCollisionMethod(powerUpArray[i], diver, 5,5))
+		{
+			//This is pushing to the array that will remove the powerup
+			itemsToRemove.push(i);
+			//Going to do some big selection statement about determining the function that the powerup would be used for.
+			//flag
+			//Selection will be here....
+			
+			//debugger flag
+			//alert("This powerups type is " +powerUpArray[i].type);
+		}
+	}
+	
+	removeFromPowerupArray(itemsToRemove);
 }
 
 function createPowerUp()
