@@ -234,9 +234,7 @@ function init()
     diverChangeY = diver.image.height/2;
     diver.x = 640; diver.y = 570;
     diver.regX = 20; diver.regY = 23; //set regX & refY to center (40x46)    
-    stage.addChild(diver);	
-	//Flag for diver powerup array
-	//diver.powerup=[];
+    stage.addChild(diver);
     stage.update();
 
     //initialize fish Container
@@ -1141,12 +1139,36 @@ function powerUpCollisions()
 		{
 			//This is pushing to the array that will remove the powerup
 			itemsToRemove.push(i);
-			//Going to do some big selection statement about determining the function that the powerup would be used for.
-			//flag
-			//Selection will be here....
 			
-			//debugger flag
-			//alert("This powerups type is " +powerUpArray[i].type);
+			if (powerUpArray[i].type=="Oxygen") 
+			{
+				if (oxygenCommand.w<350) //If it's more than 50 down just add 50.
+				{
+					oxygenCommand.w+=50;
+				}
+				else //If it's less than 50 down just refill the bar.
+				{
+					oxygenCommand.w=400;
+				}
+			}
+			else if (powerUpArray[i].type=="Drowning")
+			{
+				//Basically the same thing as before.
+				if (drowningCommand.w>50) //If it's more than 50 down just remove 50.
+				{
+					drowningCommand.w-=50;
+				}
+				else //If it's less than 50 down remove it all.
+				{
+					drowningCommand.w=0;
+				}
+			}
+			else //Do the clearing of enemies.
+			{
+				//Flag
+				//Might tween this.
+				fish.removeAllChildren();
+			}
 		}
 	}
 	
@@ -1158,45 +1180,41 @@ function createPowerUp()
 	//Randomly picking a powerup to display.
 	
 	//I get a random number between 0-3
-	var pickMe = (Math.random() * (4 - 0));
+	var pickMe = (Math.random() * 3);
 	
 	/*
-	0 = stop drowning
-	1 = stop oxygen usage
-	2 = clear enemies
-	3 = stop stamina reduction
+	<=1 = Increase oxygen in the tank (Blue)
+	>1 && <=2= Reduce drowning rate (Red)
+	>2 = Clear enemies (Green)
 	*/
 	
 	//Going to dynamically inject a property and then have it accessed when the collision happens
 	var shape = new createjs.Shape();
 	
-	if (pickMe<1)
+	if (pickMe<=1)
 	{
 		shape.graphics.beginStroke("blue").beginFill("blue").drawRect(0, 0, 10, 10);
-		shape.type = "Blue";		
+		shape.type = "Oxygen";		
 	}
 			
-	else if(pickMe>1 && pickMe<2)
+	else if(pickMe>1 && pickMe<=2)
 	{
 		shape.graphics.beginStroke("red").beginFill("red").drawRect(0, 0, 10, 10);
-		shape.type = "Red";
+		shape.type = "Drowning";
 	}
-	else if(pickMe>2 && pickMe<3)
+	else //Between 2 and 3
 	{
 			shape.graphics.beginStroke("green").beginFill("green").drawRect(0, 0, 10, 10);
-			shape.type = "Green";
+			shape.type = "Enemies";
 	}
-	else //It's between 3 and 4
-	{
-		//Trial
-	}
+	
 	powerUpArray.push(shape);
 	stage.addChild(shape);
 	
 	
 	//Setting a random X value betwseen 0 and 1270
 	shape.x = Math.round(Math.random() * 1270);
-
+	
 }
 
 
