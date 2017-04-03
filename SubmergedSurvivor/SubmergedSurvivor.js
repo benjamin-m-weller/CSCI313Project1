@@ -37,7 +37,7 @@ var bullets = [], bulletSpeed = 10;
 var fish = new createjs.Container(), fishRate = 200, fishCount = 0;
 var currentWall = 50000, wallDuration = 60, wallCount = 0;
 var bubbleSound;
-var powerUpArray = [], previousScore = 0;
+var powerUpArray = [], previousScore = 0, bubble, repair, bomb;
 
 const PWidth = 300; //width of the platforms
 
@@ -65,6 +65,7 @@ function load()
     queue.loadManifest([{id: "bigdaddy", src: "bigdaddy.png"}, {id: "tank", src: "tank.png"},
         {id: "oceanbackground", src: "oceanbackground.png"}, {id: "redarrow", src: "redarrow.png"},
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
+        {id: "bomb", src: "bomb.png"}, {id: "bubble", src: "bubble.png"}, {id: "repair", src: "repair.png"},
 		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}]);
 }
 
@@ -91,7 +92,7 @@ function game_step(event)
         add_enemies();
         change_oxygen_and_stamina();
         check_collisions();
-		create_powerups();
+		powerUpLogic();
         
         //Update the stage
         stage.update();
@@ -251,7 +252,10 @@ function change_oxygen_and_stamina()
 function check_collisions()
 {
     //Tank and Diver
-    checkTankCollision();    
+    checkTankCollision();   
+
+    //Powerups and Diver
+	powerUpCollisions();
     
     //moving bullets (MOVE SOMEWHERE ELSE AT SOME POINT)
     if(bullets.length > 0)
@@ -309,6 +313,12 @@ function game_build()
 
     // spritesheets
     magikarpSheet = new createjs.SpriteSheet(magikarpData);
+
+    // powerups
+    bubble = new createjs.Bitmap(queue.getResult("bubble"));
+    bomb = new createjs.Bitmap(queue.getResult("bomb"));
+    repair = new createjs.Bitmap(queue.getResult("repair"));
+    bubble.regX = bomb.regX = repair.regX = 20;
     
     /*--------------------------\
     | Creating Graphics Objects |
@@ -1045,11 +1055,8 @@ function isGameOver()
 	}
 }
 
-function create_powerups()
-{
-	//Remove all powerups that have collided with the diver.
-	powerUpCollisions();
-	
+function powerUpLogic()
+{	
 	var itemsToRemove=[];
 	if (powerUpArray.length>0)
 	{
@@ -1065,8 +1072,7 @@ function create_powerups()
 			}
 		}
 	}
-	
-	
+		
 	//Remove all of the shapes that need to be removed.
 	removeFromPowerupArray(itemsToRemove);
 	
@@ -1104,27 +1110,27 @@ function powerUpCollisions()
 			//This is pushing to the array that will remove the powerup
 			itemsToRemove.push(i);
 			
-			if (powerUpArray[i].type=="Oxygen") 
+			if (powerUpArray[i].type == "Oxygen") 
 			{
-				if (oxygenCommand.w<350) //If it's more than 50 down just add 50.
+				if (oxygenCommand.w < 300) //If it's more than 100 down just add 100.
 				{
-					oxygenCommand.w+=50;
+					oxygenCommand.w += 100;
 				}
-				else //If it's less than 50 down just refill the bar.
+				else //If it's less than 100 down just refill the bar.
 				{
-					oxygenCommand.w=400;
+					oxygenCommand.w = 400;
 				}
 			}
-			else if (powerUpArray[i].type=="Drowning")
+			else if (powerUpArray[i].type == "Drowning")
 			{
 				//Basically the same thing as before.
-				if (drowningCommand.w>50) //If it's more than 50 down just remove 50.
+				if (drowningCommand.w > 100) //If it's more than 100 down just remove 50.
 				{
-					drowningCommand.w-=50;
+					drowningCommand.w -= 100;
 				}
 				else //If it's less than 50 down remove it all.
 				{
-					drowningCommand.w=0;
+					drowningCommand.w = 0;
 				}
 			}
 			else //Do the clearing of enemies.
@@ -1132,6 +1138,7 @@ function powerUpCollisions()
 				//Flag
 				//Might tween this.
 				fish.removeAllChildren();
+                createjs.Sound.play("shotSound");
 			}
 		}
 	}
@@ -1153,24 +1160,28 @@ function createPowerUp()
 	*/
 	
 	//Going to dynamically inject a property and then have it accessed when the collision happens
-	var shape = new createjs.Shape();
+	var shape;// = new createjs.Shape();
 	
-	if (pickMe<=1)
+	if (pickMe <= 1)
 	{
-		shape.graphics.beginStroke("blue").beginFill("blue").drawRect(0, 0, 10, 10);
+		//shape.graphics.beginStroke("blue").beginFill("blue").drawRect(0, 0, 10, 10);
+        shape = new createjs.Bitmap(queue.getResult("bubble"));
 		shape.type = "Oxygen";		
 	}
 			
-	else if(pickMe>1 && pickMe<=2)
+	else if(pickMe > 1 && pickMe <= 2)
 	{
-		shape.graphics.beginStroke("red").beginFill("red").drawRect(0, 0, 10, 10);
+        shape = new createjs.Bitmap(queue.getResult("repair"));
+		//shape.graphics.beginStroke("red").beginFill("red").drawRect(0, 0, 10, 10);
 		shape.type = "Drowning";
 	}
 	else //Between 2 and 3
 	{
-			shape.graphics.beginStroke("green").beginFill("green").drawRect(0, 0, 10, 10);
-			shape.type = "Enemies";
+        shape = new createjs.Bitmap(queue.getResult("bomb"));
+		//shape.graphics.beginStroke("green").beginFill("green").drawRect(0, 0, 10, 10);
+		shape.type = "Enemies";
 	}
+    shape.scaleX = shape.scaleY = 0.5; //Bitmaps are too big
 	
 	powerUpArray.push(shape);
 	stage.addChild(shape);
