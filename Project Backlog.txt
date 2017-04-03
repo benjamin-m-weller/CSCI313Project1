@@ -70,6 +70,7 @@ COMPLETED FOURTH ITERATION
 		- change_oxygen_and_stamina()
 		- check_collisions()
 		- powerUpLogic()
+- (Aaron) Added background music
 
 ----------------------------------------------------------------------------------Project 1 below
 
