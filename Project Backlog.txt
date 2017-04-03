@@ -36,6 +36,8 @@ POSSIBLE:
 
 
 COMPLETED FOURTH ITERATION
+- (Ben) Wrote dynamic collision function
+- (Ben) Updated game over logic
 - (Ben) Added powerups
 	- 3 different powerups
 		- Oxygen powerup
@@ -56,8 +58,18 @@ COMPLETED FOURTH ITERATION
 	- bomb powerup -> "bomb.png"
 	- repair powerup -> "repair.png"
 - (Aaron) Beginning to re-design code
-	- Split init() into specific methods
-	- split tick (game_step) into specific methods
+	- Increased readability. Function names describe what the function does. Whoever is reading the code can go look into the function to see how it is done, but does not need to because they know what it does.
+	- Split init() into specific functions
+		- game_build()
+		- set_controls()
+		- game_start()
+	- split tick (game_step) into specific functions
+		- check_controls()
+		- apply_gravity()
+		- add_enemies()
+		- change_oxygen_and_stamina()
+		- check_collisions()
+		- powerUpLogic()
 
 ----------------------------------------------------------------------------------Project 1 below
 
