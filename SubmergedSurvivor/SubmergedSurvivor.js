@@ -1,8 +1,5 @@
 
-/*
-DOCUMENTATION
-
-*/
+//---GLOBAL VARIABLES---
 
 var queue; // LoadQueue
 var stage; // Stage
@@ -69,200 +66,14 @@ function load()
         {id: "oceanbackground", src: "oceanbackground.png"}, {id: "redarrow", src: "redarrow.png"},
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
 		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}]);
-		
-	
-
-    document.onkeyup = handleKeyUp.bind(this);
-    document.onkeydown = handleKeyDown.bind(this);
-    document.getElementById("canvas").onkeydown = handleKeyDown;
 }
 
 function init()
 {
     stage = new createjs.Stage("canvas");
-	
-    var diverImage = queue.getResult("bigdaddy");
-    var tankImage = queue.getResult("tank");
-    var oceanImage = queue.getResult("oceanbackground");
-    var redarrowImage = queue.getResult("redarrow");
-
-    // spritesheets
-    magikarpSheet = new createjs.SpriteSheet(magikarpData);
-    
-    // floor rectangle
-    var g1 = new createjs.Graphics();
-    g1.beginStroke("black").beginFill("#E5CF7F").drawRect(0, 670, 1280, 50);
-
-    // platform1 rectangle
-    var g2 = new createjs.Graphics();
-    g2.beginStroke("black").beginFill("#7481BA").drawRect(0, 0, PWidth, 30);
-
-    // black screen
-    var g3 = new createjs.Graphics();
-    g3.beginStroke("black").beginFill("black").drawRect(0, 0, 1280, 720);
-
-    // oxygen bar black background  
-    var g4 = new createjs.Graphics();
-    g4.beginStroke("black").beginFill("#434343").drawRect(0, 0, 400, 25);
-
-    // oxygen bar
-    var g5 = new createjs.Graphics();
-    g5.beginStroke("black").beginFill("lightblue"); //.drawRect() is set in a command later
-
-    // drowning bar
-    var g7 = new createjs.Graphics();
-    g7.beginStroke("black").beginFill("red"); //.drawRect() is set in a command later
-
-    // stamina bar black background  
-    var g8 = new createjs.Graphics();
-    g8.beginStroke("black").beginFill("#434343").drawRect(0, 0, 300, 25);
-
-    // stamina bar
-    var g9 = new createjs.Graphics();
-    g9.beginStroke("black").beginFill("green"); //.drawRect() is set in a command later
-
-    // red screen (for gameOver)
-    var g6 = new createjs.Graphics();
-    g6.beginStroke("red").beginFill("red").drawRect(0, 0, 1280, 720);
-
-    oceanbackground = new createjs.Bitmap(oceanImage);
-    oceanbackground.x = 0; oceanbackground.y = 0;
-    stage.addChild(oceanbackground);
-    stage.update();
-
-    floor = new createjs.Shape(g1);
-    stage.addChild(floor);
-    stage.update();
-
-    platform1 = new createjs.Shape(g2);
-    platform1.x = 490; platform1.y = 345;
-    stage.addChild(platform1);
-    stage.update();
-
-    platform2 = new createjs.Shape(g2);
-    platform2.x = -138; platform2.y = 122;
-    stage.addChild(platform2);
-    stage.update();
-
-    platform3 = new createjs.Shape(g2);
-    platform3.x = 1118; platform3.y = 122;
-    stage.addChild(platform3);
-    stage.update();
-
-    platform4 = new createjs.Shape(g2);
-    platform4.x = -138; platform4.y = 487;
-    stage.addChild(platform4);
-    stage.update();
-
-    platform5 = new createjs.Shape(g2);
-    platform5.x = 1118; platform5.y = 487;
-    stage.addChild(platform5);
-    stage.update();
-
-    oxygenLabel = new createjs.Text("Oxygen: ", "bold 25px Arial", "#434343");
-    oxygenLabel.x = 30; oxygenLabel.y = 685;
-    stage.addChild(oxygenLabel);
-    stage.update();
-
-    oxygenBarBack = new createjs.Shape(g4);
-    oxygenBarBack.x = 140; oxygenBarBack.y = 685;
-    stage.addChild(oxygenBarBack);
-    stage.update();
-
-    oxygenBar = new createjs.Shape(g5);    
-    oxygenBar.x = 140; oxygenBar.y = 685;
-    oxygenCommand = oxygenBar.graphics.drawRect(0, 0, 400, 25).command;
-    stage.addChild(oxygenBar);
-    stage.update();
-
-    drowningBar = new createjs.Shape(g7);
-    drowningBar.x = 140; drowningBar.y = 685;
-    drowningCommand = drowningBar.graphics.drawRect(0, 0, 0, 25).command;
-    drowningBar.alpha = 0.5;
-    stage.addChild(drowningBar);
-    stage.update();
-
-    staminaLabel = new createjs.Text("Stamina: ", "bold 25px Arial", "#434343");
-    staminaLabel.x = 835; staminaLabel.y = 685;
-    stage.addChild(staminaLabel);
-    stage.update();
-
-    staminaBarBack = new createjs.Shape(g8);
-    staminaBarBack.x = 950; staminaBarBack.y = 685;
-    stage.addChild(staminaBarBack);
-    stage.update();
-
-    staminaBar = new createjs.Shape(g9);
-    staminaBar.x = 950; staminaBar.y = 685;
-    staminaCommand = staminaBar.graphics.drawRect(0, 0, 300, 25).command;
-    stage.addChild(staminaBar);
-    stage.update();
-
-    redScreen = new createjs.Shape(g6);
-    stage.addChild(redScreen);
-    redScreen.alpha = 0;
-    stage.update();
-
-    scoreLabel = new createjs.Text("Score: " + score, "bold 25px Arial", "#434343");
-    scoreLabel.x = 580; scoreLabel.y = 685;
-    stage.addChild(scoreLabel);
-    stage.update();
-
-    blackScreen = new createjs.Shape(g3);
-    stage.addChild(blackScreen);
-    stage.update();
-
-    redarrowL = new createjs.Bitmap(redarrowImage);
-    redarrowL.x = 567; redarrowL.y = 320;
-    stage.addChild(redarrowL);
-    stage.update();
-
-    redarrowR = new createjs.Bitmap(redarrowImage);
-    redarrowR.x = 693; redarrowR.y = 320;
-    redarrowR.regX = redarrowR.image.width/2;
-    redarrowR.scaleX *= -1;
-    stage.addChild(redarrowR);
-    stage.update();
-
-    tank = new createjs.Bitmap(tankImage);
-    tank.x = 630; tank.y = 325;
-    stage.addChild(tank);
-    stage.update();
-
-    diver = new createjs.Bitmap(diverImage);
-    diverChangeX = diver.image.width/2;
-    diverChangeY = diver.image.height/2;
-    diver.x = 640; diver.y = 570;
-    diver.regX = 20; diver.regY = 23; //set regX & refY to center (40x46)    
-    stage.addChild(diver);
-    stage.update();
-
-    //initialize fish Container
-    fish = new createjs.Container();
-    stage.addChild(fish);
-
-    //Create text for instructions
-    var instructions = new createjs.Text("Quickly! Gather Oxygen Tanks to stay alive!\nPress the ARROW KEYS to move left, right, up and down!\nPress SPACEBAR to shoot enemies!\n\nPress ENTER to begin!", "bold 25px Arial", "white");
-    instructions.x = 640; instructions.y = 70;
-    instructions.textAlign = "center";
-    stage.addChild(instructions);
-    stage.update();
-    pause();
-    isInstructions = 0;
-    stage.removeChild(instructions);
-    createjs.Tween.get(blackScreen).to({alpha: 0}, 500);
-    createjs.Tween.get(redarrowL).to({alpha: 0}, 500);
-    createjs.Tween.get(redarrowR).to({alpha: 0}, 500);
-
-    pausedLabel = new createjs.Text("PAUSED", "bold 70px Arial", "white");
-    pausedLabel.x = 640; pausedLabel.y = 120;
-    pausedLabel.textAlign = "center";
-    pausedLabel.visible = false;
-    stage.addChild(pausedLabel);
-
-    createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", tick);
-	
+    game_build();
+    set_controls();
+    game_start();	
 }
 
 /*----------\
@@ -493,6 +304,201 @@ function tick(event)
         //Update the stage
         stage.update();
     }
+}
+
+function game_build()
+{
+    var diverImage = queue.getResult("bigdaddy");
+    var tankImage = queue.getResult("tank");
+    var oceanImage = queue.getResult("oceanbackground");
+    var redarrowImage = queue.getResult("redarrow");
+
+    // spritesheets
+    magikarpSheet = new createjs.SpriteSheet(magikarpData);
+    
+    // floor rectangle
+    var g1 = new createjs.Graphics();
+    g1.beginStroke("black").beginFill("#E5CF7F").drawRect(0, 670, 1280, 50);
+
+    // platform1 rectangle
+    var g2 = new createjs.Graphics();
+    g2.beginStroke("black").beginFill("#7481BA").drawRect(0, 0, PWidth, 30);
+
+    // black screen
+    var g3 = new createjs.Graphics();
+    g3.beginStroke("black").beginFill("black").drawRect(0, 0, 1280, 720);
+
+    // oxygen bar black background  
+    var g4 = new createjs.Graphics();
+    g4.beginStroke("black").beginFill("#434343").drawRect(0, 0, 400, 25);
+
+    // oxygen bar
+    var g5 = new createjs.Graphics();
+    g5.beginStroke("black").beginFill("lightblue"); //.drawRect() is set in a command later
+
+    // drowning bar
+    var g7 = new createjs.Graphics();
+    g7.beginStroke("black").beginFill("red"); //.drawRect() is set in a command later
+
+    // stamina bar black background  
+    var g8 = new createjs.Graphics();
+    g8.beginStroke("black").beginFill("#434343").drawRect(0, 0, 300, 25);
+
+    // stamina bar
+    var g9 = new createjs.Graphics();
+    g9.beginStroke("black").beginFill("green"); //.drawRect() is set in a command later
+
+    // red screen (for gameOver)
+    var g6 = new createjs.Graphics();
+    g6.beginStroke("red").beginFill("red").drawRect(0, 0, 1280, 720);
+
+    oceanbackground = new createjs.Bitmap(oceanImage);
+    oceanbackground.x = 0; oceanbackground.y = 0;
+    stage.addChild(oceanbackground);
+    stage.update();
+
+    floor = new createjs.Shape(g1);
+    stage.addChild(floor);
+    stage.update();
+
+    platform1 = new createjs.Shape(g2);
+    platform1.x = 490; platform1.y = 345;
+    stage.addChild(platform1);
+    stage.update();
+
+    platform2 = new createjs.Shape(g2);
+    platform2.x = -138; platform2.y = 122;
+    stage.addChild(platform2);
+    stage.update();
+
+    platform3 = new createjs.Shape(g2);
+    platform3.x = 1118; platform3.y = 122;
+    stage.addChild(platform3);
+    stage.update();
+
+    platform4 = new createjs.Shape(g2);
+    platform4.x = -138; platform4.y = 487;
+    stage.addChild(platform4);
+    stage.update();
+
+    platform5 = new createjs.Shape(g2);
+    platform5.x = 1118; platform5.y = 487;
+    stage.addChild(platform5);
+    stage.update();
+
+    oxygenLabel = new createjs.Text("Oxygen: ", "bold 25px Arial", "#434343");
+    oxygenLabel.x = 30; oxygenLabel.y = 685;
+    stage.addChild(oxygenLabel);
+    stage.update();
+
+    oxygenBarBack = new createjs.Shape(g4);
+    oxygenBarBack.x = 140; oxygenBarBack.y = 685;
+    stage.addChild(oxygenBarBack);
+    stage.update();
+
+    oxygenBar = new createjs.Shape(g5);    
+    oxygenBar.x = 140; oxygenBar.y = 685;
+    oxygenCommand = oxygenBar.graphics.drawRect(0, 0, 400, 25).command;
+    stage.addChild(oxygenBar);
+    stage.update();
+
+    drowningBar = new createjs.Shape(g7);
+    drowningBar.x = 140; drowningBar.y = 685;
+    drowningCommand = drowningBar.graphics.drawRect(0, 0, 0, 25).command;
+    drowningBar.alpha = 0.5;
+    stage.addChild(drowningBar);
+    stage.update();
+
+    staminaLabel = new createjs.Text("Stamina: ", "bold 25px Arial", "#434343");
+    staminaLabel.x = 835; staminaLabel.y = 685;
+    stage.addChild(staminaLabel);
+    stage.update();
+
+    staminaBarBack = new createjs.Shape(g8);
+    staminaBarBack.x = 950; staminaBarBack.y = 685;
+    stage.addChild(staminaBarBack);
+    stage.update();
+
+    staminaBar = new createjs.Shape(g9);
+    staminaBar.x = 950; staminaBar.y = 685;
+    staminaCommand = staminaBar.graphics.drawRect(0, 0, 300, 25).command;
+    stage.addChild(staminaBar);
+    stage.update();
+
+    redScreen = new createjs.Shape(g6);
+    stage.addChild(redScreen);
+    redScreen.alpha = 0;
+    stage.update();
+
+    scoreLabel = new createjs.Text("Score: " + score, "bold 25px Arial", "#434343");
+    scoreLabel.x = 580; scoreLabel.y = 685;
+    stage.addChild(scoreLabel);
+    stage.update();
+
+    blackScreen = new createjs.Shape(g3);
+    stage.addChild(blackScreen);
+    stage.update();
+
+    redarrowL = new createjs.Bitmap(redarrowImage);
+    redarrowL.x = 567; redarrowL.y = 320;
+    stage.addChild(redarrowL);
+    stage.update();
+
+    redarrowR = new createjs.Bitmap(redarrowImage);
+    redarrowR.x = 693; redarrowR.y = 320;
+    redarrowR.regX = redarrowR.image.width/2;
+    redarrowR.scaleX *= -1;
+    stage.addChild(redarrowR);
+    stage.update();
+
+    tank = new createjs.Bitmap(tankImage);
+    tank.x = 630; tank.y = 325;
+    stage.addChild(tank);
+    stage.update();
+
+    diver = new createjs.Bitmap(diverImage);
+    diverChangeX = diver.image.width/2;
+    diverChangeY = diver.image.height/2;
+    diver.x = 640; diver.y = 570;
+    diver.regX = 20; diver.regY = 23; //set regX & refY to center (40x46)    
+    stage.addChild(diver);
+    stage.update();
+
+    //initialize fish Container
+    fish = new createjs.Container();
+    stage.addChild(fish);
+
+    //Create text for instructions
+    var instructions = new createjs.Text("Quickly! Gather Oxygen Tanks to stay alive!\nPress the ARROW KEYS to move left, right, up and down!\nPress SPACEBAR to shoot enemies!\n\nPress ENTER to begin!", "bold 25px Arial", "white");
+    instructions.x = 640; instructions.y = 70;
+    instructions.textAlign = "center";
+    stage.addChild(instructions);
+    stage.update();
+    pause();
+    isInstructions = 0;
+    stage.removeChild(instructions);
+    createjs.Tween.get(blackScreen).to({alpha: 0}, 500);
+    createjs.Tween.get(redarrowL).to({alpha: 0}, 500);
+    createjs.Tween.get(redarrowR).to({alpha: 0}, 500);
+
+    pausedLabel = new createjs.Text("PAUSED", "bold 70px Arial", "white");
+    pausedLabel.x = 640; pausedLabel.y = 120;
+    pausedLabel.textAlign = "center";
+    pausedLabel.visible = false;
+    stage.addChild(pausedLabel);
+}
+
+function set_controls()
+{
+    document.onkeyup = handleKeyUp.bind(this);
+    document.onkeydown = handleKeyDown.bind(this);
+    document.getElementById("canvas").onkeydown = handleKeyDown;
+}
+
+function game_start()
+{
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", tick);
 }
 
 /*
