@@ -1,7 +1,6 @@
 Brainstorming for the second half: https://cdn.meme.am/cache/instances/folder608/60099608.jpg
 **Simply brainstorming** (it doens't matter how outlandish it seems we just need something to think about)
 
--Refactor code in the tick method (Ben will do this)
 -Add java doc style comments above methods 
 -Create animated seaweed in the background
 -Have the background be ominiously dark and as such seem like you are underwater
@@ -9,15 +8,6 @@ Brainstorming for the second half: https://cdn.meme.am/cache/instances/folder608
 -All custom sprites?
 -Additional enemies/ random pathing?
 -Make fish come from all directions
--Powerups (make oxygen deplete slower/reduce drownding/big point boost)
-	- Make oxygen deplete slower
-	- reduce drowning
-	- big point boost (X2, X5, X10)
--Get sounds working
--Collect parts to build a new oxygen tank
-	- Takes 5 parts (random spawns - like powerups)
-	- Sets oxygen depletion back to how slow it was at beginning
-	- Removes all water in tank from drowning
 -moving platforms
 -oxygen tanks animate while sitting (float up and down)
 -more oxygen tank locations
@@ -46,7 +36,28 @@ POSSIBLE:
 
 
 COMPLETED FOURTH ITERATION
-- 
+- (Ben) Added powerups
+	- 3 different powerups
+		- Oxygen powerup
+			- Adds some oxygen to give player more time to get to next oxygen tank
+		- Bomb powerup
+			- removes all enemies on screen
+		- repair powerup
+			- removes some water from drowning bar.
+	- Randomly chooses between 3 powerups
+	- Random x location, falls from top of screen and dissappears at bottom
+	- Collisions for player and powerups
+- (Ben) Design document
+	- P2 step 1
+	- P2 step 2
+	- P2 step 3
+- (Aaron) Added sprites for powerups
+	- Oxygen powerup -> "bubble.png"
+	- bomb powerup -> "bomb.png"
+	- repair powerup -> "repair.png"
+- (Aaron) Beginning to re-design code
+	- Split init() into specific methods
+	- split tick (game_step) into specific methods
 
 ----------------------------------------------------------------------------------Project 1 below
 
