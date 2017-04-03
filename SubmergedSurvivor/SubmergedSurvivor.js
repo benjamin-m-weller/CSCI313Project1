@@ -79,230 +79,221 @@ function init()
 /*----------\
 | Game Loop |
 \----------*/
-function tick(event) 
+function game_step(event) 
 {
     if (!event.paused)
     {
 		//Include an updated score label
 		scoreLabel.text = "Score: " + score;
 
-        /*------------------------\
-        | Left and Right Controls |
-        \------------------------*/
-        switch (xKeyHeld)
-        {
-            case "LEFT":
-                diver.x -= 6;
-                diver.rotation = -20;
-                if (diver.x <= -38) // pacman/mario bros logic
-                    diver.x = 1318;
-                break;
-            case "RIGHT":
-                diver.x += 6;
-                diver.rotation = 20;
-                if (diver.x >= 1318)
-                    diver.x = -38
-                break;
-        }
-
-        /*-----------\
-        | Up Control |
-        \-----------*/
-        if (yKeyHeld == "UP")
-        {
-            if (diver.y > 20) //Prevents character from swimming too high out of view
-                yMomentum = -10
-            onGround = 0;
-        }
-
-        /*--------\
-        | Gravity |
-        \--------*/
-        if (diver.y < 670 - diverChangeY) //Prevents character from falling through the floor
-        {
-            //Check if on platforms
-            if (onPlatform(platform1) == true || onPlatform(platform2) || onPlatform(platform3) ||
-                    onPlatform(platform4) || onPlatform(platform5)) //Spelled out explicitly for readability.
-            {
-                yMomentum = 0;
-            }
-            else
-            {
-                diver.y += yMomentum; //apply gravity
-            }
-
-            if(pressedDown == 1) //holding DOWN
-            {
-                if(yMomentum < 7)
-                    yMomentum++;
-            }
-            else if (yMomentum > 3)
-                yMomentum--; //Slow down
-            else
-                yMomentum++; //Increase gravity
+        check_controls();
+        apply_gravity();
+        add_enemies();
+        change_oxygen_and_stamina();
+        check_collisions();
+		create_powerups();
         
-        }
-        else //On floor
-        { 
-            if (onGround == 0) //Adjusts to floor
-            {
-                diver.y = 670 - diverChangeY;
-                onGround = 1;
-            }               
-            if (yMomentum < 0)
-                diver.y += yMomentum;
-        }
-        
-        /*---------------\
-        | Tank Collision |
-        \---------------*/
-        checkTankCollision();
-
-         /*-----------\
-         | Oxygen Bar |
-         \-----------*/
-		 //The below method call also implicitly does the drowning logic.
-		 oxygenBarLogic();
-      
-        /*--------\
-        | Bullets |
-        \--------*/
-        if(bullets.length > 0)
-        {
-            //checking all bullets in array
-            for(i = bullets.length-1; i >= 0; i--)
-            {
-                //removing bullets
-                if(bullets[i].b.x < -40 || bullets[i].b.x > 1320)
-                {
-                    stage.removeChild(bullets[i].b);
-                    bullets[i].b = null;
-                    bullets.splice(i, 1);
-                }
-                //moving bullets 
-                else
-                    bullets[i].b.x += bullets[i].m;
-            }
-        }
-
-        /*-----\
-        | Fish |
-        \-----*/
-        //Fish Collisions
-        if(fish.children.length > 0)
-        {
-            //checking all fish in array
-            for(i = 0; i < fish.children.length; i++)
-            {
-                //removing fish
-                if(fish.children[i].x < -70)
-                {
-                    fish.removeChildAt(i);
-                    stage.update();
-                    break;
-                }
-
-                //fish collision with bulletes
-                if(checkBulletCollision(i) == true) //Spelled out explicitly for readability. 
-                    break;
-
-                //fish collision with diver
-                if(checkFishCollision(i) == true) //Spelled out explicitly for readability. 
-                    break;
-            }
-        }
-        //Adding Fish
-        if(fishCount < fishRate)
-        {
-            fishCount++;
-        }
-        else
-        {
-            createFish("NORMAL");
-            fishCount = 0;
-
-            if(fishRate > 150)
-                fishRate -= 10;
-            else if(fishRate > 50)
-                fishRate -= 5;
-            else if(fishRate > 30)
-                fishRate -= 1;
-        }
-
-        /*--------------\
-        | Walls of Fish |
-        \--------------*/
-        //Create walls of fish at certain scores throughout the game
-        if(score > currentWall)
-        {
-            createFish("WALL");
-            wallCount ++;
-
-            if(wallCount > wallDuration)
-            {
-                // Determine the next wall
-                //  AND set the next wall's duration
-                if(currentWall == 50000)
-                    currentWall = 200000;
-                else if(currentWall == 200000)
-                {
-                    currentWall = 500000;
-                    wallDuration += 30;
-                }                 
-                else if(currentWall == 500000)
-                {
-                    currentWall = 1000000;
-                    wallDuration += 30;
-                }
-                else
-                    currentWall += 1000000;
-
-                // Reset the wall counter
-                wallCount = 0;
-            }
-        }
-
-
-        /*--------\
-        | Stamina |
-        \--------*/
-        if(staminaCommand.w <= 0)
-        {
-            staminaCommand.w = 0;
-
-            staminaRecover++;
-            if(staminaRecover >= 120)
-            {
-                staminaRecover = 0;
-                staminaCommand.w = 1;
-                isFiring = 0;
-            }
-
-        }
-        else if(isFiring == 1)
-        {
-            staminaRecover++;
-            if(staminaRecover >= 30)
-            {
-                staminaRecover = 0;
-                isFiring = 0;
-            }
-        }
-        else if(staminaCommand.w < 295)
-            staminaCommand.w += staminaRate;
-        else
-            staminaCommand.w = 300;
-
-        /*---------\
-        | Powerups |
-        \---------*/
-		//Power up logic
-		//This method does the powerup logic for creation and collisions with the diver and the sea floor.
-		powerUpLogic();
-        
-
         //Update the stage
         stage.update();
+    }
+}
+
+function check_controls()
+{
+    //Left and Right controls
+    switch (xKeyHeld)
+    {
+        case "LEFT":
+            diver.x -= 6;
+            diver.rotation = -20;
+            if (diver.x <= -38) // pacman/mario bros logic
+                diver.x = 1318;
+            break;
+        case "RIGHT":
+            diver.x += 6;
+            diver.rotation = 20;
+            if (diver.x >= 1318)
+                diver.x = -38
+            break;
+    }
+
+    //Up control
+    if (yKeyHeld == "UP")
+    {
+        if (diver.y > 20) //Prevents character from swimming too high out of view
+            yMomentum = -10
+        onGround = 0;
+    }
+}
+
+function apply_gravity()
+{
+    if (diver.y < 670 - diverChangeY) //Prevents character from falling through the floor
+    {
+        //Check if on platforms
+        if (onPlatform(platform1) == true || onPlatform(platform2) || onPlatform(platform3) ||
+                onPlatform(platform4) || onPlatform(platform5)) //Spelled out explicitly for readability.
+        {
+            yMomentum = 0;
+        }
+        else
+        {
+            diver.y += yMomentum; //apply gravity
+        }
+
+        if(pressedDown == 1) //holding DOWN
+        {
+            if(yMomentum < 7)
+                yMomentum++;
+        }
+        else if (yMomentum > 3)
+            yMomentum--; //Slow down
+        else
+            yMomentum++; //Increase gravity
+    }
+    else //On floor
+    { 
+        if (onGround == 0) //Adjusts to floor
+        {
+            diver.y = 670 - diverChangeY;
+            onGround = 1;
+        }               
+        if (yMomentum < 0)
+            diver.y += yMomentum;
+    }
+}
+
+function add_enemies()
+{
+    //Adding Fish
+    if(fishCount < fishRate)
+    {
+        fishCount++;
+    }
+    else
+    {
+        createFish("NORMAL");
+        fishCount = 0;
+
+        if(fishRate > 150)
+            fishRate -= 10;
+        else if(fishRate > 50)
+            fishRate -= 5;
+        else if(fishRate > 30)
+            fishRate -= 1;
+    }
+    
+    //Fish Walls: Create walls of fish at certain scores throughout the game
+    if(score > currentWall)
+    {
+        createFish("WALL");
+        wallCount ++;
+
+        if(wallCount > wallDuration)
+        {
+            // Determine the next wall
+            //  AND set the next wall's duration
+            if(currentWall == 50000)
+                currentWall = 200000;
+            else if(currentWall == 200000)
+            {
+                currentWall = 500000;
+                wallDuration += 30;
+            }                 
+            else if(currentWall == 500000)
+            {
+                currentWall = 1000000;
+                wallDuration += 30;
+            }
+            else
+                currentWall += 1000000;
+
+            // Reset the wall counter
+            wallCount = 0;
+        }
+    }
+}
+
+function change_oxygen_and_stamina()
+{
+    //Oxygen
+    oxygenBarLogic();
+
+    //Stamina
+    if(staminaCommand.w <= 0)
+    {
+        staminaCommand.w = 0;
+
+        staminaRecover++;
+        if(staminaRecover >= 120)
+        {
+            staminaRecover = 0;
+            staminaCommand.w = 1;
+            isFiring = 0;
+        }
+
+    }
+    else if(isFiring == 1)
+    {
+        staminaRecover++;
+        if(staminaRecover >= 30)
+        {
+            staminaRecover = 0;
+            isFiring = 0;
+        }
+    }
+    else if(staminaCommand.w < 295)
+        staminaCommand.w += staminaRate;
+    else
+        staminaCommand.w = 300;
+}
+
+function check_collisions()
+{
+    //Tank and Diver
+    checkTankCollision();    
+    
+    //moving bullets (MOVE SOMEWHERE ELSE AT SOME POINT)
+    if(bullets.length > 0)
+    {
+        //checking all bullets in array
+        for(i = bullets.length-1; i >= 0; i--)
+        {
+            //removing bullets
+            if(bullets[i].b.x < -40 || bullets[i].b.x > 1320)
+            {
+                stage.removeChild(bullets[i].b);
+                bullets[i].b = null;
+                bullets.splice(i, 1);
+            }
+            //moving bullets 
+            else
+                bullets[i].b.x += bullets[i].m;
+        }
+    }
+
+    //Fish Collisions
+    if(fish.children.length > 0)
+    {
+        //checking all fish in array
+        for(i = 0; i < fish.children.length; i++)
+        {
+            //removing fish off screen
+            if(fish.children[i].x < -70)
+            {
+                fish.removeChildAt(i);
+                stage.update();
+                break;
+            }
+
+            //fish collision with bulletes
+            if(checkBulletCollision(i) == true) //Spelled out explicitly for readability. 
+                break;
+
+            //fish collision with diver
+            if(checkFishCollision(i) == true) //Spelled out explicitly for readability. 
+                break;
+        }
     }
 }
 
@@ -498,7 +489,7 @@ function set_controls()
 function game_start()
 {
     createjs.Ticker.setFPS(60);
-    createjs.Ticker.addEventListener("tick", tick);
+    createjs.Ticker.addEventListener("tick", game_step);
 }
 
 /*
@@ -1093,7 +1084,7 @@ function isGameOver()
 	}
 }
 
-function powerUpLogic()
+function create_powerups()
 {
 	//Remove all powerups that have collided with the diver.
 	powerUpCollisions();
