@@ -36,7 +36,6 @@ var scoreLabel, score = 0, scoreRate = 0, staminaRecover = 0;;
 var bullets = [], bulletSpeed = 10;
 var fish = new createjs.Container(), fishRate = 200, fishCount = 0;
 var currentWall = 50000, wallDuration = 60, wallCount = 0;
-var bubbleSound;
 var powerUpArray = [], previousScore = 0, bubble, repair, bomb;
 
 const PWidth = 300; //width of the platforms
@@ -66,7 +65,8 @@ function load()
         {id: "oceanbackground", src: "oceanbackground.png"}, {id: "redarrow", src: "redarrow.png"},
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
         {id: "bomb", src: "bomb.png"}, {id: "bubble", src: "bubble.png"}, {id: "repair", src: "repair.png"},
-		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}]);
+		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}, {id: "albatross", src:"albatross.mp3"},
+        {id: "pop", src: "pop.mp3"}]); //NEED TO FIND A BETTER "pop"" SOUND EFFECT
 }
 
 function init()
@@ -459,8 +459,12 @@ function set_controls()
 
 function game_start()
 {
+    //set ticker
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", game_step);
+
+    //start background music
+    createjs.Sound.play("albatross", "none", 0, 0, -1, 0.4, 0, null, null);
 }
 
 /*
@@ -901,11 +905,14 @@ This function pauses the ticker.
 */
 function pause()
 {
+    createjs.Sound.stop("albatross");
     if (createjs.Ticker.getPaused())
     {
         createjs.Ticker.setPaused(false);
-                pausedLabel.visible = false;
+        pausedLabel.visible = false;
         stage.update();
+        
+        createjs.Sound.play("albatross", "none", 0, 0, -1, 0.4, 0, null, null);
     }
     else {
         createjs.Ticker.setPaused(true);
@@ -1020,7 +1027,6 @@ function drowningLogic (drowningStatus)
 		if(redScreen.alpha == 0) 
 		{
 			createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
-			createjs.Ticker.setFPS(50);
 		}
 		if (isGameOver()==true) //Spelled out explicitly for readability
 		{
@@ -1120,6 +1126,8 @@ function powerUpCollisions()
 				{
 					oxygenCommand.w = 400;
 				}
+
+                pop = createjs.Sound.play("pop");
 			}
 			else if (powerUpArray[i].type == "Drowning")
 			{
