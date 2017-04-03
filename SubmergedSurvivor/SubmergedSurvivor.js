@@ -274,10 +274,6 @@ function tick(event)
     {
 		//Include an updated score label
 		scoreLabel.text = "Score: " + score;
-		
-		//Power up logic
-		//This method does the powerup logic for creation and collisions with the diver and the sea floor.
-		powerUpLogic();
 
         /*------------------------\
         | Left and Right Controls |
@@ -485,7 +481,16 @@ function tick(event)
             staminaCommand.w += staminaRate;
         else
             staminaCommand.w = 300;
+
+        /*---------\
+        | Powerups |
+        \---------*/
+		//Power up logic
+		//This method does the powerup logic for creation and collisions with the diver and the sea floor.
+		powerUpLogic();
         
+
+        //Update the stage
         stage.update();
     }
 }
@@ -1001,6 +1006,7 @@ function resetGame()
     currentWall = 50000;
     wallDuration = 60;
     wallCount = 0;
+    previousScore = 0;
     fish.removeAllChildren();
     playerDirection = "RIGHT";
     createjs.Ticker.setPaused(false);
