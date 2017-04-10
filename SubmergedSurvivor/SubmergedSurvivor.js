@@ -1,4 +1,3 @@
-
 //---GLOBAL VARIABLES---
 
 var queue; // LoadQueue
@@ -40,6 +39,10 @@ var powerUpArray = [], previousScore = 0, bubble, repair, bomb;
 
 const PWidth = 300; //width of the platforms
 
+//Here are two custom events that assist in the game over logic.
+var gameOverEvent=new CustomEvent("gameOver");
+var restartGameEvent=new CustomEvent("restartGame");
+
 var pausedLabel;
 var isInstructions = 1;
 
@@ -67,6 +70,10 @@ function load()
         {id: "bomb", src: "bomb.png"}, {id: "bubble", src: "bubble.png"}, {id: "repair", src: "repair.png"},
 		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}, {id: "albatross", src:"albatross.mp3"},
         {id: "pop", src: "pop.mp3"}]); //NEED TO FIND A BETTER "pop"" SOUND EFFECT
+	
+	//Adding my event listeners here
+	document.addEventListener("gameOver", gameOver, false);
+	document.addEventListener("restartGame", resetGame, false); 
 }
 
 function init()
@@ -793,7 +800,7 @@ function handleKeyDown(e)
             if(isGameOver() == false) //Spelled out explicitly for readability
                 pause();
             else
-                resetGame();
+                document.dispatchEvent(restartGameEvent);
             break;
 
         case KEYCODE_D:
@@ -1030,7 +1037,7 @@ function drowningLogic (drowningStatus)
 		}
 		if (isGameOver()==true) //Spelled out explicitly for readability
 		{
-			gameOver();
+			document.dispatchEvent(gameOverEvent);
 		}
 	}
 	//If we were previously drowning but now currrently aren't
