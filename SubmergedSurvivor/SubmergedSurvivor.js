@@ -1,29 +1,3 @@
-//Trying stuff with events
-
-var gameOverEvent=new CustomEvent("gameOver",
-{
-		detail:
-		{
-			message: "The drowning bar is full"
-		},
-		
-		bubbles: true,
-		cancelable: true
-});
-
-var restartGameEvent=new CustomEvent("restartGame",
-{
-	detail:
-	{
-		message: "The game is to be restarted."
-	},
-	bubbles: true,
-	cancelable: true
-});
-
-
-
-
 //---GLOBAL VARIABLES---
 
 var queue; // LoadQueue
@@ -65,6 +39,10 @@ var powerUpArray = [], previousScore = 0, bubble, repair, bomb;
 
 const PWidth = 300; //width of the platforms
 
+//Here are two custom events that assist in the game over logic.
+var gameOverEvent=new CustomEvent("gameOver");
+var restartGameEvent=new CustomEvent("restartGame");
+
 var pausedLabel;
 var isInstructions = 1;
 
@@ -94,8 +72,8 @@ function load()
         {id: "pop", src: "pop.mp3"}]); //NEED TO FIND A BETTER "pop"" SOUND EFFECT
 	
 	//Adding my event listeners here
-	document.addEventListener("gameOver", gameOver(), false);
-	document.addEventListener("restartGame", resetGame(), false); 
+	document.addEventListener("gameOver", gameOver, false);
+	document.addEventListener("restartGame", resetGame, false); 
 }
 
 function init()
