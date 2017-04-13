@@ -66,6 +66,8 @@ function load()
 	queue.addEventListener( "complete", init );
     queue.loadManifest([{id: "bigdaddy", src: "bigdaddy.png"}, {id: "tank", src: "tank.png"},
         {id: "oceanbackground", src: "oceanbackground.png"}, {id: "redarrow", src: "redarrow.png"},
+        {id: "coral", src: "coral.png"}, {id: "coralyellow", src: "coralyellow.png"}, {id: "coralblue", src: "coralblue.png"},
+        {id: "coralgreen", src: "coralgreen.png"}, {id: "coralred", src: "coralred.png"},
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
         {id: "bomb", src: "bomb.png"}, {id: "bubble", src: "bubble.png"}, {id: "repair", src: "repair.png"},
 		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}, {id: "albatross", src:"albatross.mp3"},
@@ -139,7 +141,7 @@ function apply_gravity()
     if (diver.y < 670 - diverChangeY) //Prevents character from falling through the floor
     {
         //Check if on platforms
-        if (onPlatform(platform1) == true || onPlatform(platform2) || onPlatform(platform3) ||
+        if (onPlatform(platform1) || onPlatform(platform2) || onPlatform(platform3) ||
                 onPlatform(platform4) || onPlatform(platform5)) //Spelled out explicitly for readability.
         {
             yMomentum = 0;
@@ -317,6 +319,11 @@ function game_build()
     var tankImage = queue.getResult("tank");
     var oceanImage = queue.getResult("oceanbackground");
     var redarrowImage = queue.getResult("redarrow");
+    var coralImage = queue.getResult("coral");
+    var coralblueImage = queue.getResult("coralblue");
+    var coralyellowImage = queue.getResult("coralyellow");
+    var coralredImage = queue.getResult("coralred");
+    var coralgreenImage = queue.getResult("coralgreen");
 
     // spritesheets
     magikarpSheet = new createjs.SpriteSheet(magikarpData);
@@ -333,9 +340,6 @@ function game_build()
     // floor rectangle
     var g1 = new createjs.Graphics();
     g1.beginStroke("black").beginFill("#E5CF7F").drawRect(0, 670, 1280, 50);
-    // platform1 rectangle
-    var g2 = new createjs.Graphics();
-    g2.beginStroke("black").beginFill("#7481BA").drawRect(0, 0, PWidth, 30);
     // black screen
     var g3 = new createjs.Graphics();
     g3.beginStroke("black").beginFill("black").drawRect(0, 0, 1280, 720);
@@ -367,15 +371,45 @@ function game_build()
     floor = new createjs.Shape(g1);
 
     //platforms
-    platform1 = new createjs.Shape(g2);
+    switch(Math.floor(Math.random() * 5)){
+        case 0: platform1 = new createjs.Bitmap(coralImage); break;
+        case 1: platform1 = new createjs.Bitmap(coralblueImage); break;
+        case 2: platform1 = new createjs.Bitmap(coralyellowImage); break;
+        case 3: platform1 = new createjs.Bitmap(coralredImage); break;
+        default: platform1 = new createjs.Bitmap(coralgreenImage); break;
+    }
+    switch(Math.floor(Math.random() * 5)){
+        case 0: platform2 = new createjs.Bitmap(coralImage); break;
+        case 1: platform2 = new createjs.Bitmap(coralblueImage); break;
+        case 2: platform2 = new createjs.Bitmap(coralyellowImage); break;
+        case 3: platform2 = new createjs.Bitmap(coralredImage); break;
+        default: platform2 = new createjs.Bitmap(coralgreenImage); break;
+    }
+    switch(Math.floor(Math.random() * 5)){
+        case 0: platform3 = new createjs.Bitmap(coralImage); break;
+        case 1: platform3 = new createjs.Bitmap(coralblueImage); break;
+        case 2: platform3 = new createjs.Bitmap(coralyellowImage); break;
+        case 3: platform3 = new createjs.Bitmap(coralredImage); break;
+        default: platform3 = new createjs.Bitmap(coralgreenImage); break;
+    }
+    switch(Math.floor(Math.random() * 5)){
+        case 0: platform4 = new createjs.Bitmap(coralImage); break;
+        case 1: platform4 = new createjs.Bitmap(coralblueImage); break;
+        case 2: platform4 = new createjs.Bitmap(coralyellowImage); break;
+        case 3: platform4 = new createjs.Bitmap(coralredImage); break;
+        default: platform4 = new createjs.Bitmap(coralgreenImage); break;
+    }
+    switch(Math.floor(Math.random() * 5)){
+        case 0: platform5 = new createjs.Bitmap(coralImage); break;
+        case 1: platform5 = new createjs.Bitmap(coralblueImage); break;
+        case 2: platform5 = new createjs.Bitmap(coralyellowImage); break;
+        case 3: platform5 = new createjs.Bitmap(coralredImage); break;
+        default: platform5 = new createjs.Bitmap(coralgreenImage); break;
+    }
     platform1.x = 490; platform1.y = 345;
-    platform2 = new createjs.Shape(g2);
     platform2.x = -138; platform2.y = 122;
-    platform3 = new createjs.Shape(g2);
     platform3.x = 1118; platform3.y = 122;
-    platform4 = new createjs.Shape(g2);
     platform4.x = -138; platform4.y = 487;
-    platform5 = new createjs.Shape(g2);
     platform5.x = 1118; platform5.y = 487;
 
     //oxygen bar
