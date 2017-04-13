@@ -1120,18 +1120,18 @@ function powerUpCollisions()
 	
 	for (var i=0; i< powerUpArray.length; i++)
 	{
-		if (genericCollisionMethod(powerUpArray[i], diver, 5,5))
+		if (genericCollisionMethod(powerUpArray[i], diver, 20, 20))
 		{
 			//This is pushing to the array that will remove the powerup
 			itemsToRemove.push(i);
 			
 			if (powerUpArray[i].type == "Oxygen") 
 			{
-				if (oxygenCommand.w < 300) //If it's more than 100 down just add 100.
+				if (oxygenCommand.w < 300) //If there is more than 100 health gone
 				{
 					oxygenCommand.w += 100;
 				}
-				else //If it's less than 100 down just refill the bar.
+				else //refill oxygen
 				{
 					oxygenCommand.w = 400;
 				}
@@ -1140,12 +1140,11 @@ function powerUpCollisions()
 			}
 			else if (powerUpArray[i].type == "Drowning")
 			{
-				//Basically the same thing as before.
-				if (drowningCommand.w > 100) //If it's more than 100 down just remove 50.
+				if (drowningCommand.w > 200) //If there's more than 200 drowning
 				{
-					drowningCommand.w -= 100;
+					drowningCommand.w -= 200;
 				}
-				else //If it's less than 50 down remove it all.
+				else //Remove it all
 				{
 					drowningCommand.w = 0;
 				}
@@ -1167,43 +1166,38 @@ function createPowerUp()
 {
 	//Randomly picking a powerup to display.
 	
-	//I get a random number between 0-3
-	var pickMe = (Math.random() * 3);
+	//I get a random number between 0-6
+	var i = (Math.random() * 6);
 	
 	/*
-	<=1 = Increase oxygen in the tank (Blue)
-	>1 && <=2= Reduce drowning rate (Red)
-	>2 = Clear enemies (Green)
+	    50% - Increase oxygen in the tank (Bubble)
+	    25% - Reduce drowning rate (Repair)
+	    25% - Clear enemies (Bomb)
 	*/
 	
 	//Going to dynamically inject a property and then have it accessed when the collision happens
-	var shape;// = new createjs.Shape();
+	var shape;
 	
-	if (pickMe <= 1)
+	if (i <= 3)
 	{
-		//shape.graphics.beginStroke("blue").beginFill("blue").drawRect(0, 0, 10, 10);
         shape = new createjs.Bitmap(queue.getResult("bubble"));
 		shape.type = "Oxygen";		
 	}
 			
-	else if(pickMe > 1 && pickMe <= 2)
+	else if(i > 3 && i <= 4.5)
 	{
         shape = new createjs.Bitmap(queue.getResult("repair"));
-		//shape.graphics.beginStroke("red").beginFill("red").drawRect(0, 0, 10, 10);
 		shape.type = "Drowning";
 	}
-	else //Between 2 and 3
+	else //Between 4.6 and 6
 	{
         shape = new createjs.Bitmap(queue.getResult("bomb"));
-		//shape.graphics.beginStroke("green").beginFill("green").drawRect(0, 0, 10, 10);
 		shape.type = "Enemies";
 	}
-    shape.scaleX = shape.scaleY = 0.5; //Bitmaps are too big
 	
 	powerUpArray.push(shape);
 	stage.addChild(shape);
-	
-	
+		
 	//Setting a random X value betwseen 0 and 1270
 	shape.x = Math.round(Math.random() * 1270);
 	
