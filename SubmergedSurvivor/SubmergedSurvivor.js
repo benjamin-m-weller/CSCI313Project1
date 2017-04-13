@@ -25,7 +25,7 @@ var pressedLeft = 0, pressedRight = 0;
 var pressedDown = 0;
 
 var diver, tank, oceanbackground, blackScreen, redScreen, redarrowL, redarrowR;
-var floor, platform1, platform2, platform3, platform4, platform5;
+var floor, platforms = [];
 var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var drowningbar, drowningCommand, drowningRate = 1;
@@ -141,8 +141,16 @@ function apply_gravity()
     if (diver.y < 670 - diverChangeY) //Prevents character from falling through the floor
     {
         //Check if on platforms
-        if (onPlatform(platform1) || onPlatform(platform2) || onPlatform(platform3) ||
-                onPlatform(platform4) || onPlatform(platform5)) //Spelled out explicitly for readability.
+        var isOn = false;
+        for(var i = 0; i < platforms.length; i++)
+        {
+            if(onPlatform(platforms[i]))
+            {
+                isOn = true;
+                break; //don't need to check any more platforms
+            }   
+        }                         
+        if (isOn)
         {
             yMomentum = 0;
         }
@@ -151,7 +159,8 @@ function apply_gravity()
             diver.y += yMomentum; //apply gravity
         }
 
-        if(pressedDown == 1) //holding DOWN
+        // if holding DOWN
+        if(pressedDown == 1) 
         {
             if(yMomentum < 7)
                 yMomentum++;
@@ -371,46 +380,24 @@ function game_build()
     floor = new createjs.Shape(g1);
 
     //platforms
-    switch(Math.floor(Math.random() * 5)){
-        case 0: platform1 = new createjs.Bitmap(coralImage); break;
-        case 1: platform1 = new createjs.Bitmap(coralblueImage); break;
-        case 2: platform1 = new createjs.Bitmap(coralyellowImage); break;
-        case 3: platform1 = new createjs.Bitmap(coralredImage); break;
-        default: platform1 = new createjs.Bitmap(coralgreenImage); break;
+
+    for(var i = 0; i < 5; i++)
+    {
+        switch(Math.floor(Math.random() * 5)){
+            case 0: platforms[i] = new createjs.Bitmap(coralImage); break;
+            case 1: platforms[i] = new createjs.Bitmap(coralblueImage); break;
+            case 2: platforms[i] = new createjs.Bitmap(coralyellowImage); break;
+            case 3: platforms[i] = new createjs.Bitmap(coralredImage); break;
+            default: platforms[i] = new createjs.Bitmap(coralgreenImage); break;
+        }
     }
-    switch(Math.floor(Math.random() * 5)){
-        case 0: platform2 = new createjs.Bitmap(coralImage); break;
-        case 1: platform2 = new createjs.Bitmap(coralblueImage); break;
-        case 2: platform2 = new createjs.Bitmap(coralyellowImage); break;
-        case 3: platform2 = new createjs.Bitmap(coralredImage); break;
-        default: platform2 = new createjs.Bitmap(coralgreenImage); break;
-    }
-    switch(Math.floor(Math.random() * 5)){
-        case 0: platform3 = new createjs.Bitmap(coralImage); break;
-        case 1: platform3 = new createjs.Bitmap(coralblueImage); break;
-        case 2: platform3 = new createjs.Bitmap(coralyellowImage); break;
-        case 3: platform3 = new createjs.Bitmap(coralredImage); break;
-        default: platform3 = new createjs.Bitmap(coralgreenImage); break;
-    }
-    switch(Math.floor(Math.random() * 5)){
-        case 0: platform4 = new createjs.Bitmap(coralImage); break;
-        case 1: platform4 = new createjs.Bitmap(coralblueImage); break;
-        case 2: platform4 = new createjs.Bitmap(coralyellowImage); break;
-        case 3: platform4 = new createjs.Bitmap(coralredImage); break;
-        default: platform4 = new createjs.Bitmap(coralgreenImage); break;
-    }
-    switch(Math.floor(Math.random() * 5)){
-        case 0: platform5 = new createjs.Bitmap(coralImage); break;
-        case 1: platform5 = new createjs.Bitmap(coralblueImage); break;
-        case 2: platform5 = new createjs.Bitmap(coralyellowImage); break;
-        case 3: platform5 = new createjs.Bitmap(coralredImage); break;
-        default: platform5 = new createjs.Bitmap(coralgreenImage); break;
-    }
-    platform1.x = 490; platform1.y = 345;
-    platform2.x = -138; platform2.y = 122;
-    platform3.x = 1118; platform3.y = 122;
-    platform4.x = -138; platform4.y = 487;
-    platform5.x = 1118; platform5.y = 487;
+
+    //set location of platforms
+    platforms[0].x = 490; platforms[0].y = 345;
+    platforms[1].x = -138; platforms[1].y = 122;
+    platforms[2].x = 1118; platforms[2].y = 122;
+    platforms[3].x = -138; platforms[3].y = 487;
+    platforms[4].x = 1118; platforms[4].y = 487;
 
     //oxygen bar
     oxygenLabel = new createjs.Text("Oxygen: ", "bold 25px Arial", "#434343");
@@ -469,7 +456,10 @@ function game_build()
     instructions.textAlign = "center";
 
     //Add everything to stage.
-    stage.addChild(oceanbackground, floor, platform1, platform2, platform3, platform4, platform5, oxygenLabel, oxygenBarBack, oxygenBar, drowningBar, staminaLabel, staminaBarBack, staminaBar, redScreen, scoreLabel, blackScreen, redarrowL, redarrowR, tank, diver, fish, instructions);
+    stage.addChild(oceanbackground, floor);
+    for(var i = 0; i < platforms.length; i++)
+        stage.addChild(platforms[i]);
+    stage.addChild(oxygenLabel, oxygenBarBack, oxygenBar, drowningBar, staminaLabel, staminaBarBack, staminaBar, redScreen, scoreLabel, blackScreen, redarrowL, redarrowR, tank, diver, fish, instructions);
     stage.update();
 
     //Pause game to read instructiosn
