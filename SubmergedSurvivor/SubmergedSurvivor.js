@@ -65,7 +65,7 @@ function load()
     queue.installPlugin(createjs.Sound);
 	queue.addEventListener( "complete", init );
     queue.loadManifest([{id: "bigdaddy", src: "bigdaddy.png"}, {id: "tank", src: "tank.png"},
-        {id: "oceanbackground", src: "oceanbackground.png"}, {id: "redarrow", src: "redarrow.png"},
+        {id: "oceanbackground", src: "oceanbackground.png"}, {id: "sand", src: "sand.png"}, {id: "redarrow", src: "redarrow.png"},
         {id: "coral", src: "coral.png"}, {id: "coralyellow", src: "coralyellow.png"}, {id: "coralblue", src: "coralblue.png"},
         {id: "coralgreen", src: "coralgreen.png"}, {id: "coralred", src: "coralred.png"},
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
@@ -327,6 +327,7 @@ function game_build()
     var diverImage = queue.getResult("bigdaddy");
     var tankImage = queue.getResult("tank");
     var oceanImage = queue.getResult("oceanbackground");
+    var sandImage = queue.getResult("sand");
     var redarrowImage = queue.getResult("redarrow");
     var coralImage = queue.getResult("coral");
     var coralblueImage = queue.getResult("coralblue");
@@ -346,9 +347,6 @@ function game_build()
     /*--------------------------\
     | Creating Graphics Objects |
     \--------------------------*/
-    // floor rectangle
-    var g1 = new createjs.Graphics();
-    g1.beginStroke("black").beginFill("#E5CF7F").drawRect(0, 670, 1280, 50);
     // black screen
     var g3 = new createjs.Graphics();
     g3.beginStroke("black").beginFill("black").drawRect(0, 0, 1280, 720);
@@ -377,7 +375,8 @@ function game_build()
     oceanbackground = new createjs.Bitmap(oceanImage);
     oceanbackground.x = 0; oceanbackground.y = 0;
 
-    floor = new createjs.Shape(g1);
+    floor = new createjs.Bitmap(sandImage);
+    floor.y = 670;
 
     //platforms
 
