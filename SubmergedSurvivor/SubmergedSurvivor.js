@@ -29,9 +29,9 @@ var floor, platforms = [];
 var diverChangeX, diverChangeY;
 var oxygenLabel, oxygenBarBack, oxygenBar, oxygenCommand, oxygenRate = 0.5;
 var drowningbar, drowningCommand, drowningRate = 1;
-var scoreLabel, score = 0, scoreRate = 0, tanksCollected = 0;;
+var scoreLabel, score = 0, scoreRate = 0, tanksCollected = 0;
 var staminaLabel, staminaBar, staminaBarBack, staminaCommand, staminaRate = 2, isFiring = 0;
-var scoreLabel, score = 0, scoreRate = 0, staminaRecover = 0;;
+var scoreLabel, score = 0, scoreRate = 0, staminaRecover = 0;
 var bullets = [], bulletSpeed = 10;
 var fish = new createjs.Container(), fishRate = 200, fishCount = 0;
 var currentWall = 50000, wallDuration = 60, wallCount = 0;
@@ -113,20 +113,25 @@ function game_step(event)
 
 function check_controls()
 {
+    const xSpeed = 6;
+    const rotDegrees = 20;
+    const xSpawnLeft = -38;
+    const xSpawnRight = 1318;
+
     //Left and Right controls
     switch (xKeyHeld)
     {
         case "LEFT":
-            diver.x -= 6;
-            diver.rotation = -20;
-            if (diver.x <= -38) // pacman/mario bros logic
-                diver.x = 1318;
+            diver.x -= xSpeed;
+            diver.rotation = -rotDegrees;
+            if (diver.x <= xSpawnLeft) // pacman/mario bros logic
+                diver.x = xSpawnRight;
             break;
         case "RIGHT":
-            diver.x += 6;
-            diver.rotation = 20;
-            if (diver.x >= 1318)
-                diver.x = -38
+            diver.x += xSpeed;
+            diver.rotation = rotDegrees;
+            if (diver.x >= xSpawnRight)
+                diver.x = xSpawnLeft
             break;
     }
 
@@ -764,31 +769,6 @@ function createBullet()
 {
 	//Creates shooting sound
 	createjs.Sound.play("throw");
-	
-/*
-    //create temporary bullet
-    var gBullet = new createjs.Graphics();
-    gBullet.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 20);
-
-    var gBullet2 = new createjs.Graphics();
-    gBullet2.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 10);
-
-    var gBullet3 = new createjs.Graphics();
-    gBullet3.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 10);
-
-    var bullet = new createjs.Shape(gBullet);
-    bullet.x = 60; bullet.y = 20;
-    var bullet2 = new createjs.Shape(gBullet2);
-    bullet2.x = 30; bullet2.y = 20;
-    var bullet3 = new createjs.Shape(gBullet3);
-    bullet3.x = 10; bullet3.y = 20;
-
-    var bulletContainer = new createjs.Container();
-    bulletContainer.addChild(bullet, bullet2, bullet3);
-    bulletContainer.x = diver.x;
-    bulletContainer.y = diver.y - 20;
-    stage.addChild(bulletContainer);
-*/
 
     var tridentImage = queue.getResult("trident");
     var tribullet = new createjs.Bitmap(tridentImage);
@@ -801,16 +781,11 @@ function createBullet()
     if(playerDirection == "LEFT")
     {
         bulletMovement *= -1;
-        //bulletContainer.scaleX *= -1;
         tribullet.scaleX *= -1;
     }
 
     //add the bullet to the array
-    bullets.push({b:tribullet,m:bulletMovement});
-    //bullet = null;
-    //bullet2 = null;
-    //bullet3 = null;
-    //bulletContainer = null;
+    bullets.push({b:tribullet, m:bulletMovement});
     tribullet = null;
 
     //decrease stamina bar
@@ -1032,7 +1007,22 @@ This function resets the game after the enter key is pressed folloing a game ove
 */
 function resetGame()
 {
-    //reset variables
+    resetVariables();
+
+    //removes all children from stage. Saves memory (I think)
+    for (var i = stage.children.length - 1; i >= 0; i--)
+    {
+        stage.removeChild(stage.children[i]);
+    };
+
+    init();
+}
+
+/**
+ * Resets global variables to restart game 
+ */
+function resetVariables()
+{
     score = 0;
     scoreRate = 0;
     oxygenRate = 0.5;
@@ -1052,14 +1042,6 @@ function resetGame()
     fish.removeAllChildren();
     playerDirection = "RIGHT";
     createjs.Ticker.setPaused(false);
-
-    //removes all children from stage. Saves memory (I think)
-    for (var i = stage.children.length - 1; i >= 0; i--)
-    {
-        stage.removeChild(stage.children[i]);
-    };
-
-    init();
 }
 
 /*
@@ -1095,7 +1077,7 @@ function drowningLogic (drowningStatus)
 		{
 			createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
 		}
-		if (isGameOver()==true) //Spelled out explicitly for readability
+		if (isGameOver() == true) //Spelled out explicitly for readability
 		{
 			gameOver();
 			//document.dispatchEvent(gameOverEvent);
