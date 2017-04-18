@@ -50,6 +50,7 @@ COMPLETED FIFTH ITERATION
 	- Fish deaths
 		- randomly chooses from 3 different blood sounds
 	- player running into fish (roblox doeath sound)
+	- new music on death screen
 
 COMPLETED FOURTH ITERATION
 - (Ben) Wrote dynamic collision function
