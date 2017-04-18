@@ -72,7 +72,7 @@ function load()
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
         {id: "bomb", src: "bomb.png"}, {id: "bubble", src: "bubble.png"}, {id: "repair", src: "repair.png"},
 		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}, {id: "albatross", src:"albatross.mp3"},
-        {id: "pop", src: "pop.mp3"}]); //NEED TO FIND A BETTER "pop"" SOUND EFFECT
+        {id: "pop", src: "pop.mp3"}, {id: "repaired", src: "repaired.mp3"}]);
 	
 	//Adding my event listeners here
 	//document.addEventListener("gameOver", gameOver, false);
@@ -1172,7 +1172,7 @@ function powerUpCollisions()
 					oxygenCommand.w = 400;
 				}
 
-                pop = createjs.Sound.play("pop");
+                createjs.Sound.play("pop");
 			}
 			else if (powerUpArray[i].type == "Drowning")
 			{
@@ -1184,6 +1184,8 @@ function powerUpCollisions()
 				{
 					drowningCommand.w = 0;
 				}
+
+                createjs.Sound.play("repaired");
 			}
 			else //Do the clearing of enemies.
 			{
