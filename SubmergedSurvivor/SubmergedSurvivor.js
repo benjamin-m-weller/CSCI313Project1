@@ -66,6 +66,7 @@ function load()
 	queue.addEventListener( "complete", init );
     queue.loadManifest([{id: "bigdaddy", src: "bigdaddy.png"}, {id: "tank", src: "tank.png"},
         {id: "oceanbackground", src: "oceanbackground.png"}, {id: "sand", src: "sand.png"}, {id: "redarrow", src: "redarrow.png"},
+        {id: "trident", src: "trident.png"},
         {id: "coral", src: "coral.png"}, {id: "coralyellow", src: "coralyellow.png"}, {id: "coralblue", src: "coralblue.png"},
         {id: "coralgreen", src: "coralgreen.png"}, {id: "coralred", src: "coralred.png"},
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
@@ -745,6 +746,7 @@ function createBullet()
 	//Creates shooting sound
 	createjs.Sound.play("shotSound");
 	
+/*
     //create temporary bullet
     var gBullet = new createjs.Graphics();
     gBullet.beginStroke("black").beginFill(getRandomColor()).drawCircle(0, 0, 20);
@@ -767,21 +769,30 @@ function createBullet()
     bulletContainer.x = diver.x;
     bulletContainer.y = diver.y - 20;
     stage.addChild(bulletContainer);
+*/
+
+    var tridentImage = queue.getResult("trident");
+    var tribullet = new createjs.Bitmap(tridentImage);
+    tribullet.x = diver.x;
+    tribullet.y = diver.y - 20;
+    stage.addChild(tribullet);
 
     //determine the direction/speed of the bullet
     var bulletMovement = bulletSpeed;
     if(playerDirection == "LEFT")
     {
         bulletMovement *= -1;
-        bulletContainer.scaleX *= -1;
+        //bulletContainer.scaleX *= -1;
+        tribullet.scaleX *= -1;
     }
 
     //add the bullet to the array
-    bullets.push({b:bulletContainer,m:bulletMovement});
-    bullet = null;
-    bullet2 = null;
-    bullet3 = null;
-    bulletContainer = null;
+    bullets.push({b:tribullet,m:bulletMovement});
+    //bullet = null;
+    //bullet2 = null;
+    //bullet3 = null;
+    //bulletContainer = null;
+    tribullet = null;
 
     //decrease stamina bar
     staminaCommand.w -= 50;
@@ -789,6 +800,7 @@ function createBullet()
         isFiring = 1;
 }
 
+//THIS MIGHT BE UNNECESSARY NOW
 /*
 This function returns a random color to be used for the making of the bullets.
 */
