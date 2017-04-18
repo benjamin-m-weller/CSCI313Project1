@@ -74,7 +74,7 @@ function load()
 		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}, {id: "albatross", src:"albatross.mp3"},
         {id: "pop", src: "pop.mp3"}, {id: "repaired", src: "repaired.mp3"}, {id: "throw", src: "throw.mp3"},
         {id: "blood1", src: "blood1.mp3"}, {id: "blood2", src: "blood2.mp3"}, {id: "blood3", src: "blood3.mp3"},
-        {id: "crash", src: "roblox.mp3"}]);
+        {id: "crash", src: "roblox.mp3"}, {id: "titanic", src: "titanicMeme.mp3"}]);
 	
 	//Adding my event listeners here
 	//document.addEventListener("gameOver", gameOver, false);
@@ -1018,6 +1018,10 @@ function gameOver()
         bullets[i].b = null;
         bullets.splice(i, 1);
     }
+
+    //sound
+    createjs.Sound.stop("albatross");
+    createjs.Sound.play("titanic", "none", 0, 0, -1, 0.5, 0, null, null);
 
     createjs.Ticker.setPaused(true);
     redScreen.alpha = 1;
