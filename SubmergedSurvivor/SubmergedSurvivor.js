@@ -72,7 +72,7 @@ function load()
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
         {id: "bomb", src: "bomb.png"}, {id: "bubble", src: "bubble.png"}, {id: "repair", src: "repair.png"},
 		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}, {id: "albatross", src:"albatross.mp3"},
-        {id: "pop", src: "pop.mp3"}, {id: "repaired", src: "repaired.mp3"}]);
+        {id: "pop", src: "pop.mp3"}, {id: "repaired", src: "repaired.mp3"}, {id: "throw", src: "throw.mp3"}]);
 	
 	//Adding my event listeners here
 	//document.addEventListener("gameOver", gameOver, false);
@@ -744,7 +744,7 @@ This function creates the bullets. Each bullet is three circles, and are randoml
 function createBullet()
 {
 	//Creates shooting sound
-	createjs.Sound.play("shotSound");
+	createjs.Sound.play("throw");
 	
 /*
     //create temporary bullet

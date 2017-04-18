@@ -41,6 +41,12 @@ COMPLETED FIFTH ITERATION
 		- randomly chooses color from set
 	- Bitmap for floor
 	- Bitmap for bullets (now trident)
+- (Aaron) Added sound effects
+	- powerups
+		- bubble
+		- repair
+		- bomb
+	- throwing trident
 
 COMPLETED FOURTH ITERATION
 - (Ben) Wrote dynamic collision function
