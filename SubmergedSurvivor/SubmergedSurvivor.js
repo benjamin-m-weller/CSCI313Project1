@@ -73,7 +73,8 @@ function load()
         {id: "bomb", src: "bomb.png"}, {id: "bubble", src: "bubble.png"}, {id: "repair", src: "repair.png"},
 		{id: "bubbleSound", src: "bubbles.mp3"}, {id: "shotSound", src: "shot.mp3"}, {id: "albatross", src:"albatross.mp3"},
         {id: "pop", src: "pop.mp3"}, {id: "repaired", src: "repaired.mp3"}, {id: "throw", src: "throw.mp3"},
-        {id: "blood1", src: "blood1.mp3"}, {id: "blood2", src: "blood2.mp3"}, {id: "blood3", src: "blood3.mp3"}]);
+        {id: "blood1", src: "blood1.mp3"}, {id: "blood2", src: "blood2.mp3"}, {id: "blood3", src: "blood3.mp3"},
+        {id: "crash", src: "roblox.mp3"}]);
 	
 	//Adding my event listeners here
 	//document.addEventListener("gameOver", gameOver, false);
@@ -523,6 +524,16 @@ function checkFishCollision(fishI)
  		
  		//Removes fish
  		fish.removeChildAt(fishI);
+
+        //sound effects
+        //  Diver gets hit
+        createjs.Sound.play("crash");
+        //  Fish dies
+        switch(Math.floor(Math.random() * 3)){
+            case 0: createjs.Sound.play("blood1"); break;
+            case 1: createjs.Sound.play("blood2"); break;
+            default: createjs.Sound.play("blood3"); break;
+        }
 
         return true; 
      }
