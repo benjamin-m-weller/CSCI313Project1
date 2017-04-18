@@ -40,6 +40,7 @@ COMPLETED FIFTH ITERATION
 	- Bitmap for platforms
 		- randomly chooses color from set
 	- Bitmap for floor
+	- Bitmap for bullets (now trident)
 
 COMPLETED FOURTH ITERATION
 - (Ben) Wrote dynamic collision function
