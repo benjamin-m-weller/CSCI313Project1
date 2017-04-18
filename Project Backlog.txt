@@ -33,7 +33,13 @@ POSSIBLE:
 	- the oxygen tanks would have to move with the platform if on top
 - Move code in tick() into different methods to make tick() cleaner.
 - Add more tank locations (why not)
+- Custom graphics (16-bit/8-bit style)
 
+COMPLETED FIFTH ITERATION
+- (Aaron) Added custom graphics
+	- Bitmap for platforms
+		- randomly chooses color from set
+	- Bitmap for floor
 
 COMPLETED FOURTH ITERATION
 - (Ben) Wrote dynamic collision function

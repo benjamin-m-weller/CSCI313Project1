@@ -65,7 +65,7 @@ function load()
     queue.installPlugin(createjs.Sound);
 	queue.addEventListener( "complete", init );
     queue.loadManifest([{id: "bigdaddy", src: "bigdaddy.png"}, {id: "tank", src: "tank.png"},
-        {id: "oceanbackground", src: "oceanbackgroundOG.png"}, {id: "sand", src: "sand.png"}, {id: "redarrow", src: "redarrow.png"},
+        {id: "oceanbackground", src: "oceanbackground.png"}, {id: "sand", src: "sand.png"}, {id: "redarrow", src: "redarrow.png"},
         {id: "coral", src: "coral.png"}, {id: "coralyellow", src: "coralyellow.png"}, {id: "coralblue", src: "coralblue.png"},
         {id: "coralgreen", src: "coralgreen.png"}, {id: "coralred", src: "coralred.png"},
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
@@ -377,6 +377,7 @@ function game_build()
 
     floor = new createjs.Bitmap(sandImage);
     floor.y = 670;
+    floor.alpha = 0.5;
 
     //platforms
 
