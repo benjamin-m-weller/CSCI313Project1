@@ -496,7 +496,7 @@ function game_start()
     createjs.Ticker.addEventListener("tick", game_step);
 
     //start background music
-    createjs.Sound.play("albatross", "none", 0, 0, -1, 0.4, 0, null, null);
+    createjs.Sound.play("albatross", "none", 0, 0, -1, 0.3, 0, null, null);
 }
 
 /*
@@ -956,7 +956,7 @@ function pause()
         pausedLabel.visible = false;
         stage.update();
         
-        createjs.Sound.play("albatross", "none", 0, 0, -1, 0.4, 0, null, null);
+        createjs.Sound.play("albatross", "none", 0, 0, -1, 0.15, 0, null, null);
     }
     else {
         createjs.Ticker.setPaused(true);
