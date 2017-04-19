@@ -388,7 +388,6 @@ function game_build()
     floor.alpha = 0.5;
 
     //platforms
-
     for(var i = 0; i < 5; i++)
     {
         switch(Math.floor(Math.random() * 5)){
@@ -411,9 +410,9 @@ function game_build()
     oxygenLabel = new createjs.Text("Oxygen: ", "bold 25px Arial", "#434343");
     oxygenLabel.x = 20; oxygenLabel.y = 685;
     oxygenBarBack = new createjs.Shape(g4);
-    oxygenBarBack.x = 140; oxygenBarBack.y = 685;
+    oxygenBarBack.x = 130; oxygenBarBack.y = 685;
     oxygenBar = new createjs.Shape(g5);    
-    oxygenBar.x = 140; oxygenBar.y = 685;
+    oxygenBar.x = 130; oxygenBar.y = 685;
     oxygenCommand = oxygenBar.graphics.drawRect(0, 0, 400, 25).command;
 
     //drowning bar
@@ -470,7 +469,7 @@ function game_build()
     stage.addChild(oxygenLabel, oxygenBarBack, oxygenBar, drowningBar, staminaLabel, staminaBarBack, staminaBar, redScreen, scoreLabel, blackScreen, redarrowL, redarrowR, tank, diver, fish, instructions);
     stage.update();
 
-    //Pause game to read instructiosn
+    //Pause game to read instructions
     pause();
 
     /*--------------------\
