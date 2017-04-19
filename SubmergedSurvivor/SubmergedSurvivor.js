@@ -417,7 +417,7 @@ function game_build()
 
     //drowning bar
     drowningBar = new createjs.Shape(g7);
-    drowningBar.x = 140; drowningBar.y = 685;
+    drowningBar.x = 130; drowningBar.y = 685;
     drowningCommand = drowningBar.graphics.drawRect(0, 0, 0, 25).command;
     drowningBar.alpha = 0.5;
 
@@ -1195,7 +1195,19 @@ function powerUpCollisions()
 			{
 				//Flag
 				//Might tween this.
-				fish.removeAllChildren();
+
+                //Increase score
+                for(var i = 0; i < fish.children.length && i < 10; i++)
+                {
+                    //Treated similar to normal fish deaths.
+                    score += (500 + scoreRate/2);
+                }
+
+                //don't need to remove if there are no fish
+                if(fish.children.length > 0)
+				    fish.removeAllChildren();
+
+                //play bomb sound
                 createjs.Sound.play("shotSound");
 			}
 		}
