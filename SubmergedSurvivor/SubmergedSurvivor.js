@@ -36,6 +36,7 @@ var bullets = [], bulletSpeed = 10;
 var fish = new createjs.Container(), fishRate = 200, fishCount = 0;
 var currentWall = 50000, wallDuration = 60, wallCount = 0;
 var powerUpArray = [], previousScore = 0, bubble, repair, bomb;
+var isSandbox = false;
 
 const PWidth = 300; //width of the platforms
 
@@ -87,6 +88,9 @@ function init()
     game_build();
     set_controls();
     game_start();	
+
+    //SANDBOX!!!
+    //isSandbox = true;
 }
 
 /*----------\
@@ -106,6 +110,12 @@ function game_step(event)
         check_collisions();
 		powerUpLogic();
         
+        //SANDBOX MODE
+        if(isSandbox)
+        {
+            //SET stamina and oxygen to 400
+        }
+
         //Update the stage
         stage.update();
     }
