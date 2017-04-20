@@ -14,6 +14,7 @@ var KEYCODE_W = 87;
 var KEYCODE_A = 65;
 var KEYCODE_D = 68;
 var KEYCODE_S = 83;
+var KEYCODE_G = 71;
 
 var xKeyHeld = "NONE"; //Determines if any of the keys that moves the Diver's X are held.
 var yKeyHeld = "NONE"; //Determines if any of the keys that moves the Diver's Y are held.
@@ -36,7 +37,7 @@ var bullets = [], bulletSpeed = 10;
 var fish = new createjs.Container(), fishRate = 200, fishCount = 0;
 var currentWall = 50000, wallDuration = 60, wallCount = 0;
 var powerUpArray = [], previousScore = 0, bubble, repair, bomb;
-var isSandbox = false;
+var godMode = false;
 
 const PWidth = 300; //width of the platforms
 
@@ -67,7 +68,7 @@ function load()
 	queue.addEventListener( "complete", init );
     queue.loadManifest([{id: "bigdaddy", src: "bigdaddy.png"}, {id: "tank", src: "tank.png"},
         {id: "oceanbackground", src: "oceanbackground.png"}, {id: "sand", src: "sand.png"}, {id: "redarrow", src: "redarrow.png"},
-        {id: "trident", src: "trident.png"},
+        {id: "trident", src: "trident.png"}, {id: "bigdaddyGod", src: "bigdaddyGod.png"}, {id: "oceanbackgroundGod", src: "oceanbackgroundGod.png"},
         {id: "coral", src: "coral.png"}, {id: "coralyellow", src: "coralyellow.png"}, {id: "coralblue", src: "coralblue.png"},
         {id: "coralgreen", src: "coralgreen.png"}, {id: "coralred", src: "coralred.png"},
         {id: "magikarpImage", src: "magikarpsubsheet.png"},
@@ -90,7 +91,7 @@ function init()
     game_start();	
 
     //SANDBOX!!!
-    //isSandbox = true;
+    //godMode = true;
 }
 
 /*----------\
@@ -111,9 +112,10 @@ function game_step(event)
 		powerUpLogic();
         
         //SANDBOX MODE
-        if(isSandbox)
+        if(godMode)
         {
-            //SET stamina and oxygen to 400
+            oxygenCommand.w = 400;
+            staminaCommand.w = 300;
         }
 
         //Update the stage
@@ -842,7 +844,11 @@ function handleKeyDown(e)
 				resetGame();
                 //document.dispatchEvent(restartGameEvent);
             break;
-
+        
+        case KEYCODE_G:
+            setGodMode();
+            break;
+                
         case KEYCODE_D:
         case KEYCODE_RIGHT:
             pressedRight = 1;
@@ -945,6 +951,29 @@ function handleKeyUp(e)
 
     } 
 
+}
+
+function setGodMode()
+{
+    //set godMode flag
+    if(godMode == true)
+    {
+        godMode = false;
+
+        //Bitmaps
+        diver.image = queue.getResult("bigdaddy");
+        oceanbackground.image = queue.getResult("oceanbackground");
+    }   
+    else
+    {
+        godMode = true;
+
+        //Bitmaps
+        diver.image = queue.getResult("bigdaddyGod");
+        oceanbackground.image = queue.getResult("oceanbackgroundGod");
+    }
+
+    stage.update();
 }
 
 /*
