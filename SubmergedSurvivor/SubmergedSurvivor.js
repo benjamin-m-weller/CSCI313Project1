@@ -958,6 +958,8 @@ function setGodMode()
     if(godMode == true)
     {
         godMode = false;
+        fishRate = 200;
+        fish.removeAllChildren();
 
         //Bitmaps
         diver.image = queue.getResult("bigdaddy");
@@ -966,6 +968,7 @@ function setGodMode()
     else
     {
         godMode = true;
+        fishRate = 5; //maximum difficulty in God mode
 
         //Bitmaps
         diver.image = queue.getResult("bigdaddyGod");
