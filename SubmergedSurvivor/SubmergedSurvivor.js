@@ -89,9 +89,6 @@ function init()
     game_build();
     set_controls();
     game_start();	
-
-    //SANDBOX!!!
-    //godMode = true;
 }
 
 /*----------\
@@ -111,11 +108,12 @@ function game_step(event)
         check_collisions();
 		powerUpLogic();
         
-        //SANDBOX MODE
+        //GOD MODE
         if(godMode)
         {
             oxygenCommand.w = 400;
             staminaCommand.w = 300;
+            score = 0; //prevents cheating ;)
         }
 
         //Update the stage
@@ -470,7 +468,7 @@ function game_build()
     fish = new createjs.Container();
 
     //Create text for instructions
-    var instructions = new createjs.Text("Quickly! Gather Oxygen Tanks to stay alive!\nPress the ARROW KEYS to move left, right, up and down!\nPress SPACEBAR to shoot enemies!\n\nPress ENTER to begin!", "bold 25px Arial", "white");
+    var instructions = new createjs.Text("Quickly! Gather Oxygen Tanks to stay alive!\nPress the ARROW KEYS to move left, right, up and down!\nPress SPACEBAR to shoot enemies!\n\nPress G to switch to GOD MODE!\n\nPress ENTER to begin!", "bold 25px Arial", "white");
     instructions.x = 640; instructions.y = 70;
     instructions.textAlign = "center";
 
@@ -488,7 +486,8 @@ function game_build()
     | Remove Instructions |
     \--------------------*/
     isInstructions = 0;
-    stage.removeChild(instructions);
+    //stage.removeChild(instructions);
+    createjs.Tween.get(instructions).to({alpha: 0}, 500);
     createjs.Tween.get(blackScreen).to({alpha: 0}, 500);
     createjs.Tween.get(redarrowL).to({alpha: 0}, 500);
     createjs.Tween.get(redarrowR).to({alpha: 0}, 500);
@@ -1235,17 +1234,19 @@ function powerUpCollisions()
 				//Flag
 				//Might tween this.
 
-                //Increase score
-                for(var i = 0; i < fish.children.length && i < 10; i++)
-                {
-                    //Treated similar to normal fish deaths.
-                    score += (500 + scoreRate/2);
-                }
-
                 //don't need to remove if there are no fish
                 if(fish.children.length > 0)
-				    fish.removeAllChildren();
+                {
+                    //Increase score
+                    for(var i = 0; i < fish.children.length && i < 10; i++)
+                    {
+                        //Treated similar to normal fish deaths.
+                        score += (500 + scoreRate/2);
+                    }
 
+                    fish.removeAllChildren();
+                }
+				    
                 //play bomb sound
                 createjs.Sound.play("shotSound");
 			}
@@ -1286,7 +1287,7 @@ function createPowerUp()
 	{
         shape = new createjs.Bitmap(queue.getResult("bomb"));
 		shape.type = "Enemies";
-	}
+    }
 	
 	powerUpArray.push(shape);
 	stage.addChild(shape);
@@ -1295,29 +1296,3 @@ function createPowerUp()
 	shape.x = Math.round(Math.random() * 1270);
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
