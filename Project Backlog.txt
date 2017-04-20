@@ -54,6 +54,8 @@ COMPLETED FIFTH ITERATION
 - (Aaron) Added "God Mode"
 	- Can't die
 	- unlimited ammo
+	- tons of fish appear
+	- resets score to 0 (prevents cheating)
 
 COMPLETED FOURTH ITERATION
 - (Ben) Wrote dynamic collision function
