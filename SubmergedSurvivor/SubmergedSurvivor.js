@@ -322,7 +322,6 @@ function check_collisions()
             if(fish.children[i].x < -70)
             {
                 fish.removeChildAt(i);
-                stage.update();
                 break;
             }
 
@@ -743,7 +742,6 @@ function createFish(fishSpeed)
 
     //add temp magikarp to fish container
     fish.addChild(magik);
-    stage.update();
 }
 
 /*
