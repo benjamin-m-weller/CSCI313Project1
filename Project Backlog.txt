@@ -56,6 +56,7 @@ COMPLETED FIFTH ITERATION
 	- unlimited ammo
 	- tons of fish appear
 	- resets score to 0 (prevents cheating)
+- (Aaron) Fish go both directions
 
 COMPLETED FOURTH ITERATION
 - (Ben) Wrote dynamic collision function
