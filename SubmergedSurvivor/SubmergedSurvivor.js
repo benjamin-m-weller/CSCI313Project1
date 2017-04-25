@@ -243,7 +243,7 @@ function add_enemies()
                 wallDuration += 30;
             }
             else
-                currentWall += 1000000;
+                currentWall += (currentWall / 2); //walls keep coming at higher and higher scores
 
             // Reset the wall counter
             wallCount = 0;
@@ -958,6 +958,7 @@ function setGodMode()
         godMode = false;
         fishRate = 200;
         fish.removeAllChildren();
+        scoreRate = 0;
 
         //Bitmaps
         diver.image = queue.getResult("bigdaddy");
