@@ -319,7 +319,7 @@ function check_collisions()
         for(i = 0; i < fish.children.length; i++)
         {
             //removing fish off screen
-            if(fish.children[i].x < -70)
+            if(fish.children[i].x < -70 || fish.children[i].x > 1350)
             {
                 fish.removeChildAt(i);
                 break;
@@ -524,7 +524,7 @@ return: The function returns true if the fish is colliding with the diver. False
 function checkFishCollision(fishI)
 {
  	
-  	if(diver.x + 23 > fish.children[fishI].x && diver.x - 23 < fish.children[fishI].x + 93 &&
+  	if(diver.x + 23 > fish.children[fishI].x && diver.x < fish.children[fishI].x + 63 &&
             diver.y + 20 > fish.children[fishI].y && diver.y - 23 < fish.children[fishI].y + 69)
  	{
  		//Decrement oxygenBar
@@ -707,67 +707,95 @@ fishSpeed: Has two values, "WALL" and "NORMAL",
 if the fish are to form a wall they must be a bit slower, 
 otherwise the fish will be moving at a normal speed.
 */
-function createFish(fishSpeed)
+function createFish(fishType)
 {
     //create temporary magikarp
     var magik = new createjs.Sprite(magikarpSheet,'moveLeft');
+    var dir = Math.random() * 2
     
-    if(fishSpeed == "WALL")
+    if(fishType == "WALL")
     {
-        magik.addEventListener("change", swimLeftSlow);
+        if(dir < 1)
+            magik.addEventListener("change", swimLeftSlow);
+        else
+            magik.addEventListener("change", swimRightSlow);
+  
         magik.scaleX = magik.scaleY = 0.75;
     }
     else // "NORMAL"
     {
+        //Randomly set speed/size of fish
         var speed = Math.random() * 3;
-        if(speed < 1) //Flag //Doesn't make sense?
+        if(speed < 1)
         {
-            magik.addEventListener("change", swimLeft);
+            if(dir < 1)
+                magik.addEventListener("change", swimLeft);
+            else
+                magik.addEventListener("change", swimRight);
         }
         else if(speed < 2)
         {
-            magik.addEventListener("change", swimLeftFast);
+            if(dir < 1)
+                magik.addEventListener("change", swimLeftFast);
+            else
+                magik.addEventListener("change", swimRightFast);
             magik.scaleX = magik.scaleY = 1.5;
         }
         else
         {
-            magik.addEventListener("change", swimLeftSlow);
+            if(dir < 1)
+                magik.addEventListener("change", swimLeftSlow);
+            else
+                magik.addEventListener("change", swimRightSlow);
             magik.scaleX = magik.scaleY = 0.75;
         }
     }
 
-    //magik.addEventListener("change", swimLeft);
-    magik.x = 1320;
-    magik.y = 50 + Math.floor(Math.random() * 505);
+    //flip fish swimming right
+    if(dir >= 1)
+    {
+        magik.regX = 31.5;
+        magik.scaleX *= -1;
+    }
+
+    //Set position of fish
+    if(dir < 1)
+        magik.x = 1320;
+    else    
+        magik.x = -40;
+    magik.y = 20 + Math.random() * 550;
 
     //add temp magikarp to fish container
     fish.addChild(magik);
 }
 
 /*
-This function is used to update the magicarp that are swimming left at the normal speed (<1)
+These functions are used to update the position of the fish each time the stage is updated.
 e: The change event.
 */
 function swimLeft(e) {
     var s = e.target;
     s.x -= 3;
 }
-/*
-This function is used to update the magicarp that are swimming left at the fast speed (<2)
-e: The change event.
-*/
 function swimLeftFast(e) {
     var s = e.target;
     s.x -= 4;
 }
-
-/*
-This function is used to update the magicarp that are swimming left at the slow speed ??????? //Flag
-e: The change event.
-*/
 function swimLeftSlow(e) {
     var s = e.target;
     s.x -= 2;
+}
+function swimRight(e) {
+    var s = e.target;
+    s.x += 3;
+}
+function swimRightFast(e) {
+    var s = e.target;
+    s.x += 4;
+}
+function swimRightSlow(e) {
+    var s = e.target;
+    s.x += 2;
 }
 
 /*
