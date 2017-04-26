@@ -41,10 +41,6 @@ var godMode = false;
 
 const PWidth = 300; //width of the platforms
 
-//Here are two custom events that assist in the game over logic.
-// var gameOverEvent=new CustomEvent("gameOver");
-// var restartGameEvent=new CustomEvent("restartGame");
-
 var pausedLabel;
 var isInstructions = 1;
 
@@ -61,6 +57,11 @@ magikarpData = {
     }
 };
 
+/**
+ * Purpose: Called when HTML body is loaded. Loads assets for the game and then calls the init() function
+ * Param: n/a
+ * Return: n/a
+ */
 function load()
 {
     queue = new createjs.LoadQueue(false);
@@ -77,12 +78,13 @@ function load()
         {id: "pop", src: "pop.mp3"}, {id: "repaired", src: "repaired.mp3"}, {id: "throw", src: "throw.mp3"},
         {id: "blood1", src: "blood1.mp3"}, {id: "blood2", src: "blood2.mp3"}, {id: "blood3", src: "blood3.mp3"},
         {id: "crash", src: "roblox.mp3"}, {id: "titanic", src: "titanicMeme.mp3"}]);
-	
-	//Adding my event listeners here
-	//document.addEventListener("gameOver", gameOver, false);
-	//document.addEventListener("restartGame", resetGame, false); 
 }
 
+/**
+ * Purpose: Sets up and starts the game.
+ * Param: n/a
+ * Return: n/a
+ */
 function init()
 {
     stage = new createjs.Stage("canvas");
@@ -94,11 +96,16 @@ function init()
 /*----------\
 | Game Loop |
 \----------*/
+/**
+ * Purpose: Game loop that is called each tick (60 times per second -- 60 fps)
+ * Param: event - tick event
+ * Return: n/a
+ */
 function game_step(event) 
 {
     if (!event.paused)
     {
-		//Include an updated score label
+		// update score
 		scoreLabel.text = "Score: " + score;
 
         check_controls();
@@ -116,226 +123,16 @@ function game_step(event)
             score = 0; //prevents cheating ;)
         }
 
-        //Update the stage
+        // update the stage
         stage.update();
     }
 }
 
-function check_controls()
-{
-    const xSpeed = 6;
-    const rotDegrees = 20;
-    const xSpawnLeft = -38;
-    const xSpawnRight = 1318;
-
-    //Left and Right controls
-    switch (xKeyHeld)
-    {
-        case "LEFT":
-            diver.x -= xSpeed;
-            diver.rotation = -rotDegrees;
-            if (diver.x <= xSpawnLeft) // pacman/mario bros logic
-                diver.x = xSpawnRight;
-            break;
-        case "RIGHT":
-            diver.x += xSpeed;
-            diver.rotation = rotDegrees;
-            if (diver.x >= xSpawnRight)
-                diver.x = xSpawnLeft
-            break;
-    }
-
-    //Up control
-    if (yKeyHeld == "UP")
-    {
-        if (diver.y > 20) //Prevents character from swimming too high out of view
-            yMomentum = -10
-        onGround = 0;
-    }
-}
-
-function apply_gravity()
-{
-    if (diver.y < 670 - diverChangeY) //Prevents character from falling through the floor
-    {
-        //Check if on platforms
-        var isOn = false;
-        for(var i = 0; i < platforms.length; i++)
-        {
-            if(onPlatform(platforms[i]))
-            {
-                isOn = true;
-                break; //don't need to check any more platforms
-            }   
-        }                         
-        if (isOn)
-        {
-            yMomentum = 0;
-        }
-        else
-        {
-            diver.y += yMomentum; //apply gravity
-        }
-
-        // if holding DOWN
-        if(pressedDown == 1) 
-        {
-            if(yMomentum < 7)
-                yMomentum++;
-        }
-        else if (yMomentum > 3)
-            yMomentum--; //Slow down
-        else
-            yMomentum++; //Increase gravity
-    }
-    else //On floor
-    { 
-        if (onGround == 0) //Adjusts to floor
-        {
-            diver.y = 670 - diverChangeY;
-            onGround = 1;
-        }               
-        if (yMomentum < 0)
-            diver.y += yMomentum;
-    }
-}
-
-function add_enemies()
-{
-    //Adding Fish
-    if(fishCount < fishRate)
-    {
-        fishCount++;
-    }
-    else
-    {
-        createFish("NORMAL");
-        fishCount = 0;
-
-        if(fishRate > 150)
-            fishRate -= 10;
-        else if(fishRate > 50)
-            fishRate -= 5;
-        else if(fishRate > 30)
-            fishRate -= 1;
-    }
-    
-    //Fish Walls: Create walls of fish at certain scores throughout the game
-    if(score > currentWall)
-    {
-        createFish("WALL");
-        wallCount ++;
-
-        if(wallCount > wallDuration)
-        {
-            // Determine the next wall
-            //  AND set the next wall's duration
-            if(currentWall == 50000)
-                currentWall = 200000;
-            else if(currentWall == 200000)
-            {
-                currentWall = 500000;
-                wallDuration += 30;
-            }                 
-            else if(currentWall == 500000)
-            {
-                currentWall = 1000000;
-                wallDuration += 30;
-            }
-            else
-                currentWall += (currentWall / 2); //walls keep coming at higher and higher scores
-
-            // Reset the wall counter
-            wallCount = 0;
-        }
-    }
-}
-
-function change_oxygen_and_stamina()
-{
-    //Oxygen
-    oxygenBarLogic();
-
-    //Stamina
-    if(staminaCommand.w <= 0)
-    {
-        staminaCommand.w = 0;
-
-        staminaRecover++;
-        if(staminaRecover >= 120)
-        {
-            staminaRecover = 0;
-            staminaCommand.w = 1;
-            isFiring = 0;
-        }
-
-    }
-    else if(isFiring == 1)
-    {
-        staminaRecover++;
-        if(staminaRecover >= 30)
-        {
-            staminaRecover = 0;
-            isFiring = 0;
-        }
-    }
-    else if(staminaCommand.w < 295)
-        staminaCommand.w += staminaRate;
-    else
-        staminaCommand.w = 300;
-}
-
-function check_collisions()
-{
-    //Tank and Diver
-    checkTankCollision();   
-
-    //Powerups and Diver
-	powerUpCollisions();
-    
-    //moving bullets (MOVE SOMEWHERE ELSE AT SOME POINT)
-    if(bullets.length > 0)
-    {
-        //checking all bullets in array
-        for(i = bullets.length-1; i >= 0; i--)
-        {
-            //removing bullets
-            if(bullets[i].b.x < -40 || bullets[i].b.x > 1320)
-            {
-                stage.removeChild(bullets[i].b);
-                bullets[i].b = null;
-                bullets.splice(i, 1);
-            }
-            //moving bullets 
-            else
-                bullets[i].b.x += bullets[i].m;
-        }
-    }
-
-    //Fish Collisions
-    if(fish.children.length > 0)
-    {
-        //checking all fish in array
-        for(i = 0; i < fish.children.length; i++)
-        {
-            //removing fish off screen
-            if(fish.children[i].x < -70 || fish.children[i].x > 1350)
-            {
-                fish.removeChildAt(i);
-                break;
-            }
-
-            //fish collision with bulletes
-            if(checkBulletCollision(i) == true) //Spelled out explicitly for readability. 
-                break;
-
-            //fish collision with diver
-            if(checkFishCollision(i) == true) //Spelled out explicitly for readability. 
-                break;
-        }
-    }
-}
-
+/**
+ * Purpose: sets values to game variables, setting up the environment of the game. Also deals with instructions.
+ * Param: n/a
+ * Return: n/a
+ */
 function game_build()
 {
     /*-----------------------\
@@ -399,6 +196,7 @@ function game_build()
     //platforms
     for(var i = 0; i < 5; i++)
     {
+        //Randomly choose from 5 platform colors
         switch(Math.floor(Math.random() * 5)){
             case 0: platforms[i] = new createjs.Bitmap(coralImage); break;
             case 1: platforms[i] = new createjs.Bitmap(coralblueImage); break;
@@ -498,6 +296,11 @@ function game_build()
     stage.addChild(pausedLabel);
 }
 
+/**
+ * Purpose: Sets the fuctions to handle keypresses.
+ * Param: n/a
+ * Return: n/a
+ */
 function set_controls()
 {
     document.onkeyup = handleKeyUp.bind(this);
@@ -505,6 +308,11 @@ function set_controls()
     document.getElementById("canvas").onkeydown = handleKeyDown;
 }
 
+/**
+ * Purpose: Sets the ticker and starts the background music.
+ * Param: n/a
+ * Return: n/a
+ */
 function game_start()
 {
     //set ticker
@@ -515,12 +323,253 @@ function game_start()
     createjs.Sound.play("albatross", "none", 0, 0, -1, 0.3, 0, null, null);
 }
 
-/*
-This function checks to see if the diver is colliding with a fish. If the diver is colliding with a fish
-then the oxygen is dropped, and fish is removed.
-fishI: This is the index of the fish sprite as it is contained in the mother "fish" container.
-return: The function returns true if the fish is colliding with the diver. False otherwise.
-*/
+/**
+ * Purpose: Decides what happens when certain keys are held down.
+ * Param: n/a
+ * Return: n/a
+ */
+function check_controls()
+{
+    const xSpeed = 6;
+    const rotDegrees = 20;
+    const xSpawnLeft = -38;
+    const xSpawnRight = 1318;
+
+    //Left and Right controls
+    switch (xKeyHeld)
+    {
+        case "LEFT":
+            diver.x -= xSpeed;
+            diver.rotation = -rotDegrees;
+            if (diver.x <= xSpawnLeft) // pacman/mario bros logic
+                diver.x = xSpawnRight;
+            break;
+        case "RIGHT":
+            diver.x += xSpeed;
+            diver.rotation = rotDegrees;
+            if (diver.x >= xSpawnRight)
+                diver.x = xSpawnLeft
+            break;
+    }
+
+    //Up control
+    if (yKeyHeld == "UP")
+    {
+        if (diver.y > 20) //Prevents character from swimming too high out of view
+            yMomentum = -10
+        onGround = 0;
+    }
+}
+
+/**
+ * Purpose: Applies gravity to the diver. Also prevents diver from falling through platforms and the floor.
+ * Param: n/a
+ * Return: n/a
+ */
+function apply_gravity()
+{
+    if (diver.y < 670 - diverChangeY) //Prevents character from falling through the floor
+    {
+        //Check if on platforms
+        var isOn = false;
+        for(var i = 0; i < platforms.length; i++)
+        {
+            if(onPlatform(platforms[i]))
+            {
+                isOn = true;
+                break; //don't need to check any more platforms
+            }   
+        }                         
+        if (isOn)
+        {
+            yMomentum = 0;
+        }
+        else
+        {
+            diver.y += yMomentum; //apply gravity
+        }
+
+        // if holding DOWN
+        if(pressedDown == 1) 
+        {
+            if(yMomentum < 7)
+                yMomentum++;
+        }
+        else if (yMomentum > 3)
+            yMomentum--; //Slow down
+        else
+            yMomentum++; //Increase gravity
+    }
+    else //On floor
+    { 
+        if (onGround == 0) //Adjusts to floor
+        {
+            diver.y = 670 - diverChangeY;
+            onGround = 1;
+        }               
+        if (yMomentum < 0)
+            diver.y += yMomentum;
+    }
+}
+
+/**
+ * Purpose: Decides when to add new enemies to the game.
+ * Param: n/a
+ * Return: n/a
+ */
+function add_enemies()
+{
+    //Adding Fish
+    if(fishCount < fishRate)
+    {
+        fishCount++;
+    }
+    else
+    {
+        createFish("NORMAL");
+        fishCount = 0;
+
+        if(fishRate > 150)
+            fishRate -= 10;
+        else if(fishRate > 50)
+            fishRate -= 5;
+        else if(fishRate > 30)
+            fishRate -= 1;
+    }
+    
+    //Fish Walls: Create walls of fish at certain scores throughout the game
+    if(score > currentWall)
+    {
+        createFish("WALL");
+        wallCount ++;
+
+        if(wallCount > wallDuration)
+        {
+            // Determine the next wall
+            //  AND set the next wall's duration
+            if(currentWall == 50000)
+                currentWall = 200000;
+            else if(currentWall == 200000)
+            {
+                currentWall = 500000;
+                wallDuration += 30;
+            }                 
+            else if(currentWall == 500000)
+            {
+                currentWall = 1000000;
+                wallDuration += 30;
+            }
+            else
+                currentWall += (currentWall / 2); //walls keep coming at higher and higher scores
+
+            // Reset the wall counter
+            wallCount = 0;
+        }
+    }
+}
+
+/**
+ * Purpose: Decreases/Increases the oxygen and stamina bars depending on what's happening in the game.
+ * Param: n/a
+ * Return: n/a
+ */
+function change_oxygen_and_stamina()
+{
+    //Oxygen
+    oxygenBarLogic();
+
+    //Stamina
+    if(staminaCommand.w <= 0)
+    {
+        staminaCommand.w = 0;
+
+        staminaRecover++;
+        if(staminaRecover >= 120)
+        {
+            staminaRecover = 0;
+            staminaCommand.w = 1;
+            isFiring = 0;
+        }
+
+    }
+    else if(isFiring == 1)
+    {
+        staminaRecover++;
+        if(staminaRecover >= 30)
+        {
+            staminaRecover = 0;
+            isFiring = 0;
+        }
+    }
+    else if(staminaCommand.w < 295)
+        staminaCommand.w += staminaRate;
+    else
+        staminaCommand.w = 300;
+}
+
+/**
+ * Purpose: Checks all collisions in the game.
+ * Param: n/a
+ * Return: n/a
+ */
+function check_collisions()
+{
+    //Tank and Diver
+    checkTankCollision();   
+
+    //Powerups and Diver
+	powerUpCollisions();
+    
+    //moving bullets (MOVE SOMEWHERE ELSE AT SOME POINT)
+    if(bullets.length > 0)
+    {
+        //checking all bullets in array
+        for(i = bullets.length-1; i >= 0; i--)
+        {
+            //removing bullets
+            if(bullets[i].b.x < -40 || bullets[i].b.x > 1320)
+            {
+                stage.removeChild(bullets[i].b);
+                bullets[i].b = null;
+                bullets.splice(i, 1);
+            }
+            //moving bullets 
+            else
+                bullets[i].b.x += bullets[i].m;
+        }
+    }
+
+    //Fish Collisions
+    if(fish.children.length > 0)
+    {
+        //checking all fish in array
+        for(i = 0; i < fish.children.length; i++)
+        {
+            //removing fish off screen
+            if(fish.children[i].x < -70 || fish.children[i].x > 1350)
+            {
+                fish.removeChildAt(i);
+                break;
+            }
+
+            //fish collision with bulletes
+            if(checkBulletCollision(i) == true) //Spelled out explicitly for readability. 
+                break;
+
+            //fish collision with diver
+            if(checkFishCollision(i) == true) //Spelled out explicitly for readability. 
+                break;
+        }
+    }
+}
+
+/**
+ * Purpose: Checks for a collision between a fish and the diver.
+ * Param: fishI - index for specific fish in the fish container.
+ * Return: true/false
+ *      - true: There is a collision.
+ *      - false: No collision.
+ */
 function checkFishCollision(fishI)
 {
  	
@@ -553,12 +602,14 @@ function checkFishCollision(fishI)
      }
  	
 }
-/*
-This function checks to see if a bullet is colliding with a fish. If a bullet is colliding with a fish
-then the bullet/fish are removed, in addition to adding to the score and incrementing the score rate.
-fishI: This is the index of the fish sprite as it is contained in the mother "fish" container.
-return: The function returns true if a bullet is colliding with a fish. False otherwise.
-*/
+
+/**
+ * Purpose: Checks for collisions between a fish and all the bullets.
+ * Param: fishI - index for specific fish in the fish container.
+ * Return: true/false
+ *      - true: There is a collision.
+ *      - false: No collision.
+ */
 function checkBulletCollision(fishI)
 {
 
@@ -600,12 +651,14 @@ function checkBulletCollision(fishI)
     return false; 
 
 } 
-/*
-This function indicates if the diver is standing on a platform, and it stops him falling through 
-the top of the platform, but it allows him to go through the bottom of it.
-p: Is is reference to a platform.
-return: True if the diver is on the playform, false otherwise.
-*/
+
+/**
+ * Purpose: Checks to see if diver is on a platform.
+ * Param: p - specific platform to check.
+ * Return: true/false
+ *      - true: Diver is on the platform.
+ *      - false: Not on platform.
+ */
 function onPlatform(p) 
 {
     //On top of platform
@@ -620,11 +673,12 @@ function onPlatform(p)
         return false; 
 }
 
-/*
-This function checks to see if the tank and diver are colliding.
-If they are, it calls the moveTank() method, and plays a sound.
-It also does some score logic with regards to difficulty.
-*/
+/**
+ * Purpose: Checks for a collision between the tank and the diver.
+ *          If there is, then moves the tank and adjusts game variables accordingly.
+ * Param: n/a
+ * Return: n/a
+ */
 function checkTankCollision()
 {
 	if (genericCollisionMethod(tank, diver, 10, 10))
@@ -646,28 +700,31 @@ function checkTankCollision()
 	}
 }
 
-/*
-This method is a generic collision method that will determine if two bitmaps are colliding.
-imageWithCenterCollision: This is the image that will have to collide with the center.
-imageWithCollisionAnywhere: This is the image that if anywhere touches the center of the fist arugment it will "collide".
-centerOfImageOneX: This is used to determine the center of the first bitmap (X cordinate).
-centerOfImageOneY: This is used to determine the center of the first bitmap (Y cordinate).
-return: This method returns true if imageWithCollisionAnywhere is currently colliding with the center of imageWithCenterCollision. False otherwise.
-*/
-function genericCollisionMethod(imageWithCenterCollision, imageWithCollisionAnywhere, centerOfImageOneX, centerOfImageOneY)
+/**
+ * Purpose: Generic collision method to check if 2 bitmaps are colliding.
+ * Param: i1 - This is the image that will have to collide with the center.
+ *        i2 - This is the image that if anywhere touches the center of the fist arugment it will "collide".
+ *        i1CenterX - This is used to determine the center of the first bitmap (X cordinate).
+ *        i1CenterY - This is used to determine the center of the first bitmap (Y cordinate).
+ * Return: true/false
+ *      true: There is a collision between i2 and the center of i1
+ *      false: No collision
+ */
+function genericCollisionMethod(i1, i2, i1CenterX, i1CenterY)
 {
-	var point = imageWithCenterCollision.localToLocal(centerOfImageOneX, centerOfImageOneY, imageWithCollisionAnywhere);
+	var point = i1.localToLocal(i1CenterX, i1CenterY, i2);
 	
-	return (imageWithCollisionAnywhere.hitTest(point.x, point.y));
+	return (i2.hitTest(point.x, point.y));
 }
 
-/*
-This function moves the current location of the tank and moves it to a new one.
-It also tweens them during the movement.
-*/
+/**
+ * Purpose: Moves the oxygen tank to a different location. Randomly selects from certain positions.
+ * Param: n/a
+ * Return: n/a
+ */
 function movesTank()
 {
-	//I have a list of locations that the tank could be in
+	// locations
 	var myArray = [
         {x:630, y:325}, //middle platform
         {x:630, y:650}, //middle floor
@@ -679,7 +736,7 @@ function movesTank()
         {x:1250, y:650} //right floor
         ];
 		
-	//I take the current location of the tank, remove it, and then randomly place the tank in another location.
+	// find current location
 	var myx = tank.x;
 	var myy = tank.y;
 	for (var i = 0; i < myArray.length; i++)
@@ -690,23 +747,22 @@ function movesTank()
 		}
 	}
 	
-	//Whatever value the for loop stops at indicates the index of the location that will be removed.
+	// remove current location
 	myArray.splice(i, 1); //This should remove the current location.
 	
-	//Going to select a random location
+	// choose new location
 	var randomIndex = Math.floor(Math.random() * (myArray.length-1)); 
 	
-	//Set the tank to the random index's location, and tween it there
+	// move tank to new location
     createjs.Tween.get(tank).to({x: myArray[randomIndex].x}, 200);
     createjs.Tween.get(tank).to({y: myArray[randomIndex].y}, 200);
 }
 
-/*
-This function is the go to function for creating fish. 
-fishSpeed: Has two values, "WALL" and "NORMAL", 
-if the fish are to form a wall they must be a bit slower, 
-otherwise the fish will be moving at a normal speed.
-*/
+/**
+ * Purpose: Creates a new fish
+ * Param: fishType - What type of fish to create.
+ * Return: n/a
+ */
 function createFish(fishType)
 {
     //create temporary magikarp
@@ -769,10 +825,12 @@ function createFish(fishType)
     fish.addChild(magik);
 }
 
-/*
-These functions are used to update the position of the fish each time the stage is updated.
-e: The change event.
-*/
+/**
+ * Purpose: Moves the fish left or right and and at a specific speed
+ *          (multiple functions, each a little different)
+ * Param: e - object to move
+ * Return: n/a
+ */
 function swimLeft(e) {
     var s = e.target;
     s.x -= 3;
@@ -798,9 +856,11 @@ function swimRightSlow(e) {
     s.x += 2;
 }
 
-/*
-This function creates the bullets. Each bullet is three circles, and are randomly assigned a color.
-*/
+/**
+ * Purpose: Creates and fires a new bullet
+ * Param: n/a
+ * Return: n/a
+ */
 function createBullet()
 {
 	//Creates shooting sound
@@ -830,23 +890,11 @@ function createBullet()
         isFiring = 1;
 }
 
-//THIS MIGHT BE UNNECESSARY NOW
-/*
-This function returns a random color to be used for the making of the bullets.
-*/
-function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
-
-/*
-This function handles all keydown events.
-e: Keydown event.
-*/
+/**
+ * Purpose: Handles keydown events
+ * Param: e - keydown event
+ * Return: n/a
+ */
 function handleKeyDown(e)
 {
     //cross browser issues
@@ -909,10 +957,11 @@ function handleKeyDown(e)
     }
 }
 
-/*
-This function handles all keyup events.
-e: Keyup event.
-*/
+/**
+ * Purpose: Handles keyup events
+ * Param: e - keyup event
+ * Return: n/a
+ */
 function handleKeyUp(e)
 {
     //cross browser issues
@@ -973,11 +1022,14 @@ function handleKeyUp(e)
         case KEYCODE_DOWN:
             pressedDown = 0;
             break;
-
     } 
-
 }
 
+/**
+ * Purpose: Turns on or off God mode. Changes images and difficulty.
+ * Param: n/a
+ * Return: n/a
+ */
 function setGodMode()
 {
     //set godMode flag
@@ -1005,9 +1057,11 @@ function setGodMode()
     stage.update();
 }
 
-/*
-This function pauses the ticker.
-*/
+/**
+ * Purpose: Pauses or resumes the ticker
+ * Param: n/a
+ * Return: n/a
+ */
 function pause()
 {
     createjs.Sound.stop("albatross");
@@ -1029,9 +1083,11 @@ function pause()
     }
 }
 
-/*
-This function executes the game over sequence.
-*/
+/**
+ * Purpose: Executes game over sequences
+ * Param: n/a
+ * Return: n/a
+ */
 function gameOver()
 {
     //Reposition scoreLabel
@@ -1069,14 +1125,16 @@ function gameOver()
     redScreen.alpha = 1;
 }
 
-/*
-This function resets the game after the enter key is pressed folloing a game over.
-*/
+/**
+ * Purpose: Resets game by resetting variables and calling init()
+ * Param: n/a
+ * Return: n/a
+ */
 function resetGame()
 {
     resetVariables();
 
-    //removes all children from stage. Saves memory (I think)
+    //removes all children from stage
     for (var i = stage.children.length - 1; i >= 0; i--)
     {
         stage.removeChild(stage.children[i]);
@@ -1086,7 +1144,9 @@ function resetGame()
 }
 
 /**
- * Resets global variables to restart game 
+ * Purpose: Resets global variables to restart game correctly
+ * Param: n/a
+ * Return: n/a
  */
 function resetVariables()
 {
@@ -1111,32 +1171,33 @@ function resetVariables()
     createjs.Ticker.setPaused(false);
 }
 
-/*
-This method does the logic for the oxygenBar during the game
-This method also implicitly does the drowning logic for the game.
-*/
+/**
+ * Purpose: Decreases oxygen bar if it is not all gone. Otherwise, increase drowning bar.
+ * Param: n/a
+ * Return: n/a
+ */
 function oxygenBarLogic()
 {
 	if(oxygenCommand.w > 0)
-        {
-            oxygenCommand.w -= oxygenRate;
-            drowningLogic(false); //We are not currently drowning
-            score++;
-		}
-        else
-        { 
-            drowningLogic(true);
-        }
+    {
+        oxygenCommand.w -= oxygenRate;
+        drowningLogic(false); //We are not currently drowning
+        score++;
+	}
+    else
+    { 
+        drowningLogic(true);
+    }
 }
 
-/*
-This method does the drowning logic for the game.
-It will only be called from within the oxygenBarLogic method.
-drowningStatus: Is true if the player currently is drowning, false otherwise.
-*/
-function drowningLogic (drowningStatus)
+/**
+ * Purpose: Increases drowning bar. Determines gameOver() if it fills
+ * Param: isDrowning - true/false depending on if player is drowning or not
+ * Return: n/a
+ */
+function drowningLogic(isDrowning)
 {
-	if (drowningStatus == true) //Spelled out to be entirely explicit
+	if (isDrowning == true) //Spelled out to be entirely explicit
 	{
 		drowningCommand.w += drowningRate;
 		//Change the amount of red the screen shows (increase it)
@@ -1144,28 +1205,31 @@ function drowningLogic (drowningStatus)
 		{
 			createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
 		}
-		if (isGameOver() == true) //Spelled out explicitly for readability
+		if(isGameOver() == true) //Spelled out explicitly for readability
 		{
 			gameOver();
-			//document.dispatchEvent(gameOverEvent);
 		}
 	}
 	//If we were previously drowning but now currrently aren't
-	else if(drowningCommand.w > 0 && drowningStatus==false) 
-        {
-            //drowningCommand.w -= 0.05; //drowning bar slowly drains
-			//Change the amound of red the screen shows(decrease it)
-			if(redScreen.alpha == 0.3) 
-			{
+	else if(drowningCommand.w > 0 && isDrowning == false) 
+    {
+        //drowningCommand.w -= 0.05; //drowning bar slowly drains
+		//Change the amound of red the screen shows(decrease it)
+		if(redScreen.alpha == 0.3) 
+		{
 				createjs.Tween.get(redScreen).to({alpha: 0}, 500);
 				createjs.Ticker.setFPS(60); 
-			}
-        }
+		}
+    }
 }
 
-/*
-This method was an attempt to simplify the logic that revolved around checking if the game was done or not.
-*/
+/**
+ * Purpose: Determines if game should be over
+ * Param: n/a
+ * Return: true/false
+ *      true: game over
+ *      false: not game over
+ */
 function isGameOver()
 {
 	if(drowningCommand.w >= 400)
@@ -1178,6 +1242,11 @@ function isGameOver()
 	}
 }
 
+/**
+ * Purpose: Deals with powerups. Creates them, applies effects, and removes them.
+ * Param: n/a
+ * Return: n/a
+ */
 function powerUpLogic()
 {	
 	var itemsToRemove=[];
@@ -1197,7 +1266,7 @@ function powerUpLogic()
 	}
 		
 	//Remove all of the shapes that need to be removed.
-	removeFromPowerupArray(itemsToRemove);
+	removeFromPowerUpArray(itemsToRemove);
 	
 	//Every 10k points I want to add a powerup.
 	if (score - previousScore > 1000 && powerUpArray.length <= 3)
@@ -1208,20 +1277,30 @@ function powerUpLogic()
 	}
 }
 
-function removeFromPowerupArray(arrayOfIndexesToRemove)
+/**
+ * Purpose: Removes powerup from powerUpArray
+ * Param: powerUpsToRemove - index of specific powerup from powerUpArray
+ * Return: n/a
+ */
+function removeFromPowerUpArray(powerUpsToRemove)
 {
-	if (arrayOfIndexesToRemove.length>0) 
+	if (powerUpsToRemove.length > 0) 
 	{
 		//This will remove all of the items from the passed array.
-		for (var i=0; i<arrayOfIndexesToRemove.length; i++)
+		for (var i = 0; i < powerUpsToRemove.length; i++)
 		{
-			var variable=arrayOfIndexesToRemove.pop();
+			var variable = powerUpsToRemove.pop();
 			stage.removeChild(powerUpArray[variable]);
 			powerUpArray.splice(variable, 1); //Just removing the one value on this iteration
 		}
 	}
 }
 
+/**
+ * Purpose: Checks for collisions between powerUps and the diver. Applies effect of powerup.
+ * Param: n/a
+ * Return: n/a
+ */
 function powerUpCollisions()
 {
 	var itemsToRemove=[];
@@ -1261,9 +1340,6 @@ function powerUpCollisions()
 			}
 			else //Do the clearing of enemies.
 			{
-				//Flag
-				//Might tween this.
-
                 //don't need to remove if there are no fish
                 if(fish.children.length > 0)
                 {
@@ -1283,9 +1359,14 @@ function powerUpCollisions()
 		}
 	}
 	
-	removeFromPowerupArray(itemsToRemove);
+	removeFromPowerUpArray(itemsToRemove);
 }
 
+/**
+ * Purpose: Creates a new powerUp. Chosen by spawn rates
+ * Param: n/a
+ * Return: n/a
+ */
 function createPowerUp()
 {
 	//Randomly picking a powerup to display.
@@ -1294,6 +1375,7 @@ function createPowerUp()
 	var i = (Math.random() * 6);
 	
 	/*
+        SPAWN RATES:
 	    50% - Increase oxygen in the tank (Bubble)
 	    25% - Reduce drowning rate (Repair)
 	    25% - Clear enemies (Bomb)
@@ -1324,5 +1406,4 @@ function createPowerUp()
 		
 	//Setting a random X value betwseen 0 and 1270
 	shape.x = Math.round(Math.random() * 1270);
-	
 }
