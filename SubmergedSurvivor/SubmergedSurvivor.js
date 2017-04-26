@@ -283,7 +283,6 @@ function game_build()
     | Remove Instructions |
     \--------------------*/
     isInstructions = 0;
-    //stage.removeChild(instructions);
     createjs.Tween.get(instructions).to({alpha: 0}, 500);
     createjs.Tween.get(blackScreen).to({alpha: 0}, 500);
     createjs.Tween.get(redarrowL).to({alpha: 0}, 500);
@@ -373,32 +372,31 @@ function apply_gravity()
         //Check if on platforms
         var isOn = false;
         for(var i = 0; i < platforms.length; i++)
-        {
             if(onPlatform(platforms[i]))
             {
                 isOn = true;
                 break; //don't need to check any more platforms
             }   
-        }                         
+
         if (isOn)
-        {
             yMomentum = 0;
-        }
         else
-        {
             diver.y += yMomentum; //apply gravity
-        }
 
         // if holding DOWN
         if(pressedDown == 1) 
         {
             if(yMomentum < 7)
                 yMomentum++;
-        }
+        }        
         else if (yMomentum > 3)
+        {
             yMomentum--; //Slow down
+        }           
         else
+        {
             yMomentum++; //Increase gravity
+        }           
     }
     else //On floor
     { 
@@ -406,7 +404,8 @@ function apply_gravity()
         {
             diver.y = 670 - diverChangeY;
             onGround = 1;
-        }               
+        }  
+
         if (yMomentum < 0)
             diver.y += yMomentum;
     }
@@ -423,7 +422,7 @@ function add_enemies()
     if(fishCount < fishRate)
     {
         fishCount++;
-    }
+    }      
     else
     {
         createFish("NORMAL");
@@ -502,9 +501,13 @@ function change_oxygen_and_stamina()
         }
     }
     else if(staminaCommand.w < 295)
+    {
         staminaCommand.w += staminaRate;
+    }      
     else
+    {
         staminaCommand.w = 300;
+    }        
 }
 
 /**
@@ -535,7 +538,9 @@ function check_collisions()
             }
             //moving bullets 
             else
+            {
                 bullets[i].b.x += bullets[i].m;
+            }
         }
     }
 
@@ -553,11 +558,11 @@ function check_collisions()
             }
 
             //fish collision with bulletes
-            if(checkBulletCollision(i) == true) //Spelled out explicitly for readability. 
+            if(checkBulletCollision(i))
                 break;
 
             //fish collision with diver
-            if(checkFishCollision(i) == true) //Spelled out explicitly for readability. 
+            if(checkFishCollision(i))
                 break;
         }
     }
@@ -588,7 +593,7 @@ function checkFishCollision(fishI)
  		//Removes fish
  		fish.removeChildAt(fishI);
 
-        //sound effects
+        //SOUND EFFECTS
         //  Diver gets hit
         createjs.Sound.play("crash");
         //  Fish dies
@@ -621,7 +626,9 @@ function checkBulletCollision(fishI)
         {
             // remove bullet
             if(bullets[i].b.alpha == 1)
+            { 
                 bullets[i].b.alpha = 0.5
+            }
             else
             {
                 stage.removeChild(bullets[i].b);
@@ -646,10 +653,8 @@ function checkBulletCollision(fishI)
             return true; 
             break;
         }
-
     }
     return false; 
-
 } 
 
 /**
@@ -665,12 +670,14 @@ function onPlatform(p)
     if (yMomentum >= 0 && pressedDown == 0 &&
         diver.y >= p.y-4 - diverChangeY && diver.y <= p.y - diverChangeY &&
         diver.x >= p.x - diverChangeX && diver.x <= p.x + PWidth + diverChangeX)
-        {
+    {
             diver.y = p.y - diverChangeY;
             return true; 
-        }
+    }
     else
+    {
         return false; 
+    }      
 }
 
 /**
@@ -734,7 +741,7 @@ function movesTank()
         {x:1250, y:102}, //top right platform
         {x:1250, y:467}, //bottom right platform
         {x:1250, y:650} //right floor
-        ];
+    ];
 		
 	// find current location
 	var myx = tank.x;
@@ -742,9 +749,7 @@ function movesTank()
 	for (var i = 0; i < myArray.length; i++)
 	{
 		if (myArray[i].x == tank.x && myArray[i].y == tank.y)
-		{
 			break;
-		}
 	}
 	
 	// remove current location
@@ -815,11 +820,11 @@ function createFish(fishType)
     }
 
     //Set position of fish
-    if(dir < 1)
+    if(dir < 1)                             // set x
         magik.x = 1320;
     else    
         magik.x = -40;
-    magik.y = 20 + Math.random() * 550;
+    magik.y = 20 + Math.random() * 550;     // set y
 
     //add temp magikarp to fish container
     fish.addChild(magik);
@@ -910,12 +915,12 @@ function handleKeyDown(e)
             if(staminaCommand.w > 0) //Doesn't allow player to shoot while out of stamina
                 createBullet();
             break;
+
         case KEYCODE_ENTER:
-            if(isGameOver() == false) //Spelled out explicitly for readability
-                pause();
+            if(isGameOver())
+                resetGame();
             else
-				resetGame();
-                //document.dispatchEvent(restartGameEvent);
+                pause();
             break;
         
         case KEYCODE_G:
@@ -953,7 +958,6 @@ function handleKeyDown(e)
         case KEYCODE_DOWN:
             pressedDown = 1;
             break;
-
     }
 }
 
@@ -1032,8 +1036,7 @@ function handleKeyUp(e)
  */
 function setGodMode()
 {
-    //set godMode flag
-    if(godMode == true)
+    if(godMode)
     {
         godMode = false;
         fishRate = 200;
@@ -1055,120 +1058,6 @@ function setGodMode()
     }
 
     stage.update();
-}
-
-/**
- * Purpose: Pauses or resumes the ticker
- * Param: n/a
- * Return: n/a
- */
-function pause()
-{
-    createjs.Sound.stop("albatross");
-    if (createjs.Ticker.getPaused())
-    {
-        createjs.Ticker.setPaused(false);
-        pausedLabel.visible = false;
-        stage.update();
-        
-        createjs.Sound.play("albatross", "none", 0, 0, -1, 0.15, 0, null, null);
-    }
-    else {
-        createjs.Ticker.setPaused(true);
-		if(isInstructions == 0)
-        {
-            pausedLabel.visible = true;
-            stage.update();
-        }
-    }
-}
-
-/**
- * Purpose: Executes game over sequences
- * Param: n/a
- * Return: n/a
- */
-function gameOver()
-{
-    //Reposition scoreLabel
-    scoreLabel.color = "white";
-    scoreLabel.font = "bold 50px Arial";
-    scoreLabel.x = 640; scoreLabel.y = 620;
-    scoreLabel.textAlign = "center";
-    stage.swapChildren(diver, scoreLabel);
-    
-    //reuse pauseLabel
-    pausedLabel.text = "YOU DROWNED"
-    pausedLabel.visible = true;
-
-    var gameOverText = new createjs.Text("Press ENTER to play again!", "bold 30px Arial", "white");
-    gameOverText.textAlign = "center";
-    gameOverText.x = 640; gameOverText.y = 300;
-    stage.addChild(gameOverText);
-    stage.update();
-
-    //set visible to false
-    tank.visible = false;
-    //Remove bullets on screen
-    for(i = bullets.length-1; i >= 0; i--)
-    {
-        stage.removeChild(bullets[i].b);
-        bullets[i].b = null;
-        bullets.splice(i, 1);
-    }
-
-    //sound
-    createjs.Sound.stop("albatross");
-    createjs.Sound.play("titanic", "none", 0, 0, -1, 0.5, 0, null, null);
-
-    createjs.Ticker.setPaused(true);
-    redScreen.alpha = 1;
-}
-
-/**
- * Purpose: Resets game by resetting variables and calling init()
- * Param: n/a
- * Return: n/a
- */
-function resetGame()
-{
-    resetVariables();
-
-    //removes all children from stage
-    for (var i = stage.children.length - 1; i >= 0; i--)
-    {
-        stage.removeChild(stage.children[i]);
-    };
-
-    init();
-}
-
-/**
- * Purpose: Resets global variables to restart game correctly
- * Param: n/a
- * Return: n/a
- */
-function resetVariables()
-{
-    score = 0;
-    scoreRate = 0;
-    oxygenRate = 0.5;
-    oxygenCommand.w = 400;
-    drowningCommand.w = 0;
-    isInstructions = 1;
-    yMomentum = 0;
-    onGround = 0;
-    pressedLeft = 0, pressedRight = 0;
-    pressedDown = 0;
-    fishRate= 200;
-    fishCount = 0;
-    currentWall = 50000;
-    wallDuration = 60;
-    wallCount = 0;
-    previousScore = 0;
-    fish.removeAllChildren();
-    playerDirection = "RIGHT";
-    createjs.Ticker.setPaused(false);
 }
 
 /**
@@ -1197,18 +1086,15 @@ function oxygenBarLogic()
  */
 function drowningLogic(isDrowning)
 {
-	if (isDrowning == true) //Spelled out to be entirely explicit
+	if (isDrowning)
 	{
 		drowningCommand.w += drowningRate;
 		//Change the amount of red the screen shows (increase it)
 		if(redScreen.alpha == 0) 
-		{
 			createjs.Tween.get(redScreen).to({alpha: 0.3}, 500);
-		}
-		if(isGameOver() == true) //Spelled out explicitly for readability
-		{
+
+		if(isGameOver())
 			gameOver();
-		}
 	}
 	//If we were previously drowning but now currrently aren't
 	else if(drowningCommand.w > 0 && isDrowning == false) 
@@ -1406,4 +1292,119 @@ function createPowerUp()
 		
 	//Setting a random X value betwseen 0 and 1270
 	shape.x = Math.round(Math.random() * 1270);
+}
+
+/**
+ * Purpose: Pauses or resumes the ticker
+ * Param: n/a
+ * Return: n/a
+ */
+function pause()
+{
+    createjs.Sound.stop("albatross");
+    if (createjs.Ticker.getPaused())
+    {
+        createjs.Ticker.setPaused(false);
+        pausedLabel.visible = false;
+        stage.update();
+        
+        createjs.Sound.play("albatross", "none", 0, 0, -1, 0.15, 0, null, null);
+    }
+    else
+    {
+        createjs.Ticker.setPaused(true);
+		if(isInstructions == 0)
+        {
+            pausedLabel.visible = true;
+            stage.update();
+        }
+    }
+}
+
+/**
+ * Purpose: Executes game over sequences
+ * Param: n/a
+ * Return: n/a
+ */
+function gameOver()
+{
+    //Reposition scoreLabel
+    scoreLabel.color = "white";
+    scoreLabel.font = "bold 50px Arial";
+    scoreLabel.x = 640; scoreLabel.y = 620;
+    scoreLabel.textAlign = "center";
+    stage.swapChildren(diver, scoreLabel);
+    
+    //reuse pauseLabel
+    pausedLabel.text = "YOU DROWNED"
+    pausedLabel.visible = true;
+
+    var gameOverText = new createjs.Text("Press ENTER to play again!", "bold 30px Arial", "white");
+    gameOverText.textAlign = "center";
+    gameOverText.x = 640; gameOverText.y = 300;
+    stage.addChild(gameOverText);
+    stage.update();
+
+    //set visible to false
+    tank.visible = false;
+    //Remove bullets on screen
+    for(i = bullets.length-1; i >= 0; i--)
+    {
+        stage.removeChild(bullets[i].b);
+        bullets[i].b = null;
+        bullets.splice(i, 1);
+    }
+
+    //sound
+    createjs.Sound.stop("albatross");
+    createjs.Sound.play("titanic", "none", 0, 0, -1, 0.5, 0, null, null);
+
+    createjs.Ticker.setPaused(true);
+    redScreen.alpha = 1;
+}
+
+/**
+ * Purpose: Resets game by resetting variables and calling init()
+ * Param: n/a
+ * Return: n/a
+ */
+function resetGame()
+{
+    resetVariables();
+
+    //removes all children from stage
+    for (var i = stage.children.length - 1; i >= 0; i--)
+    {
+        stage.removeChild(stage.children[i]);
+    };
+
+    init();
+}
+
+/**
+ * Purpose: Resets global variables to restart game correctly
+ * Param: n/a
+ * Return: n/a
+ */
+function resetVariables()
+{
+    score = 0;
+    scoreRate = 0;
+    oxygenRate = 0.5;
+    oxygenCommand.w = 400;
+    drowningCommand.w = 0;
+    isInstructions = 1;
+    yMomentum = 0;
+    onGround = 0;
+    pressedLeft = 0, pressedRight = 0;
+    pressedDown = 0;
+    fishRate= 200;
+    fishCount = 0;
+    currentWall = 50000;
+    wallDuration = 60;
+    wallCount = 0;
+    previousScore = 0;
+    fish.removeAllChildren();
+    playerDirection = "RIGHT";
+    createjs.Ticker.setPaused(false);
 }
