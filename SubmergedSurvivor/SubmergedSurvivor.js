@@ -68,7 +68,7 @@ function load()
     queue.installPlugin(createjs.Sound);
 	queue.addEventListener( "complete", init );
     queue.loadManifest([{id: "bigdaddy", src: "bigdaddy.png"}, {id: "tank", src: "tank.png"},
-        {id: "oceanbackground", src: "oceanbackground.png"}, {id: "sand", src: "sand.png"}, {id: "redarrow", src: "redarrow.png"},
+        {id: "oceanbackground", src: "oceanbackground.gif"}, {id: "sand", src: "sand.png"}, {id: "redarrow", src: "redarrow.png"},
         {id: "trident", src: "trident.png"}, {id: "bigdaddyGod", src: "bigdaddyGod.png"}, {id: "oceanbackgroundGod", src: "oceanbackgroundGod.png"},
         {id: "coral", src: "coral.png"}, {id: "coralyellow", src: "coralyellow.png"}, {id: "coralblue", src: "coralblue.png"},
         {id: "coralgreen", src: "coralgreen.png"}, {id: "coralred", src: "coralred.png"},
